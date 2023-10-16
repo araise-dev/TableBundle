@@ -162,7 +162,7 @@
             {% set subTables = table.getSubTables(row) %}
             {% set subTableStimulusAction = subTables ? stimulus_action('araise/table-bundle/accordion', 'toggle', 'click') : '' %}
             <tr class="whatwedo_table-row hover:bg-neutral-100 transition duration-500 color align-top"
-                {{ subTableStimulusAction }}
+                {{ subTableStimulusAction|raw }}
                 aria-expanded="false"
             >
                 {% if table.hasBatchActions() and table.getOption('content_visibility')['content_show_header'] %}
