@@ -1,6 +1,6 @@
 [![Latest Stable Version](https://poser.pugx.org/araise/table-bundle/v/stable)](https://packagist.org/packages/araise/table-bundle)
 
-# Docs araise table bundle
+# araise Table Bundle - Documentation
 
 This bundle is part of the [araise.dev](https://araise.dev) framework.
 
