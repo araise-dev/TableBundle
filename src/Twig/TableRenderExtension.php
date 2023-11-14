@@ -51,9 +51,9 @@ class TableRenderExtension extends AbstractExtension
 
     private function renderTable($context, Table $table, string $blockName = 'table')
     {
-        $template = $this->getTemplate($this->getTheme($context));
         $context['table'] = $table;
         $context['blockName'] = $blockName;
+        $template = $this->getTemplate($this->getTheme($context));
 
         return $template->renderBlock($blockName, $context);
     }
