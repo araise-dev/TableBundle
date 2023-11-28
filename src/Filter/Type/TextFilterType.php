@@ -25,9 +25,9 @@ class TextFilterType extends FilterType
     public function getOperators(): array
     {
         return [
+            static::CRITERIA_CONTAINS => 'araise_table.filter.operator.contains',
             static::CRITERIA_EQUAL => 'araise_table.filter.operator.equal',
             static::CRITERIA_NOT_EQUAL => 'araise_table.filter.operator.not_equal',
-            static::CRITERIA_CONTAINS => 'araise_table.filter.operator.contains',
             static::CRITERIA_STARTS_WITH => 'araise_table.filter.operator.starts_with',
             static::CRITERIA_ENDS_WITH => 'araise_table.filter.operator.ends_with',
             static::CRITERIA_IS_EMPTY => 'araise_table.filter.operator.is_empty',
