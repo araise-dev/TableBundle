@@ -239,6 +239,15 @@ class Table
         return $this->getInternalActions($this->actions);
     }
 
+    public function getAction(string $acronym): ?\araise\CoreBundle\Action\Action
+    {
+        if (isset($this->actions[$acronym])) {
+            return $this->actions[$acronym];
+        }
+
+        return null;
+    }
+
     /**
      * @return Action[]
      */
@@ -252,6 +261,24 @@ class Table
         $this->actions[$acronym] = new $type($acronym, $options);
 
         return $this;
+    }
+
+    public function removeAction(string $acronym): static
+    {
+        if (isset($this->actions[$acronym])) {
+            unset($this->actions[$acronym]);
+        }
+
+        return $this;
+    }
+
+    public function getBatchAction(string $acronym): ?\araise\CoreBundle\Action\Action
+    {
+        if (isset($this->batchActions[$acronym])) {
+            return $this->batchActions[$acronym];
+        }
+
+        return null;
     }
 
     public function addBatchAction(string $acronym, array $options = [], string $type = Action::class): static

@@ -206,38 +206,41 @@
                 {% if tableActions|length %}
                     <td class="whatwedo_table-actions pr-6 align-top">
 
-                        <div
-                            class="relative flex justify-end items-center" {{ stimulus_controller('araise/core-bundle/dropdown') }}>
-                            <button
-                                class="whatwedo_table-actions-button"
-                                {{ stimulus_action('araise/core-bundle/dropdown', 'toggle') |
-                                stimulus_action('araise/core-bundle/dropdown', 'close', 'scroll@window') |
-                                stimulus_action('araise/core-bundle/dropdown', 'layoutCalculate') |
-                                stimulus_action('araise/core-bundle/dropdown', 'layoutCalculate', 'resize@window') }}
-                                type="button"
-                            >
-                                <span class="sr-only">Optionen</span>
-                                {{ bootstrap_icon('three-dots-vertical', { class: 'h-4 w-4' }) }}
-                            </button>
-
+                        {% set tableActionsVisible = tableActions | filter(action => not attribute(action, 'visibility') is defined or action.visibility(row)) %}
+                        {% if tableActionsVisible|length %}
                             <div
-                                {{ stimulus_target('araise/core-bundle/dropdown', 'menu') }}
-                                class="z-50 hidden transition duration-300 origin-top-right mx-3 origin-top-right absolute right-7 top-0 -translate-x-1 w-48 -mt-1 rounded-md shadow-lg z-10 bg-white ring-1 ring-black ring-opacity-5 divide-y divide-neutral-200 focus:outline-none"
-                                data-transition-enter-from="opacity-0 scale-95"
-                                data-transition-enter-to="opacity-100 scale-100"
-                                data-transition-leave-from="opacity-100 scale-100"
-                                data-transition-leave-to="opacity-0 scale-95"
-                                tabindex="-1"
-                            >
-                                <div class="py-1" role="none">
-                                    {% for action in tableActions %}
-                                        <span class="block">
-                                            {{ araise_table_action_render(action, row) }}
-                                        </span>
-                                    {% endfor %}
+                                class="relative flex justify-end items-center" {{ stimulus_controller('araise/core-bundle/dropdown') }}>
+                                <button
+                                    class="whatwedo_table-actions-button"
+                                    {{ stimulus_action('araise/core-bundle/dropdown', 'toggle') |
+                                    stimulus_action('araise/core-bundle/dropdown', 'close', 'scroll@window') |
+                                    stimulus_action('araise/core-bundle/dropdown', 'layoutCalculate') |
+                                    stimulus_action('araise/core-bundle/dropdown', 'layoutCalculate', 'resize@window') }}
+                                    type="button"
+                                >
+                                    <span class="sr-only">Optionen</span>
+                                    {{ bootstrap_icon('three-dots-vertical', { class: 'h-4 w-4' }) }}
+                                </button>
+
+                                <div
+                                    {{ stimulus_target('araise/core-bundle/dropdown', 'menu') }}
+                                    class="z-50 hidden transition duration-300 origin-top-right mx-3 origin-top-right absolute right-7 top-0 -translate-x-1 w-48 -mt-1 rounded-md shadow-lg z-10 bg-white ring-1 ring-black ring-opacity-5 divide-y divide-neutral-200 focus:outline-none"
+                                    data-transition-enter-from="opacity-0 scale-95"
+                                    data-transition-enter-to="opacity-100 scale-100"
+                                    data-transition-leave-from="opacity-100 scale-100"
+                                    data-transition-leave-to="opacity-0 scale-95"
+                                    tabindex="-1"
+                                >
+                                    <div class="py-1" role="none">
+                                        {% for action in tableActionsVisible %}
+                                            <span class="block">
+                                                {{ araise_table_action_render(action, row) }}
+                                            </span>
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        {% endif %}
                     </td>
                 {% endif %}
             </tr>

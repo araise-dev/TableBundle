@@ -1,4 +1,5 @@
 * [Getting Started](/)
+* [Bundle Configuration](bundle-configuration.md)
 * [Table Configuration](table-configuration.md)
     * [Filters](filters.md)
 * [Formatter](formatter.md)

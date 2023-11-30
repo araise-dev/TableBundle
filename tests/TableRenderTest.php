@@ -23,11 +23,60 @@ class TableRenderTest extends KernelTestCase
     use ResetDatabase;
     use Factories;
 
-    public function testRenderDoctrineTable()
+    public function testRenderDoctrineTableWithTurbo()
     {
         CompanyFactory::createMany(10);
 
         $tableFactory = self::getContainer()->get(TableFactory::class);
+
+        $twig = self::getContainer()->get(Environment::class);
+        if ($twig instanceof Environment) {
+            $twig->addGlobal('enable_turbo', true);
+        }
+
+        $fakeRequest = Request::create('/', 'GET');
+        $fakeRequest->attributes->set('_route', 'dummy');
+
+        $fakeRequest->setSession(new Session(new MockArraySessionStorage()));
+        /** @var RequestStack $requestStack */
+        $requestStack = self::getContainer()->get(RequestStack::class);
+
+        $requestStack->push($fakeRequest);
+
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+
+        $dataLoaderOptions[DoctrineDataLoader::OPT_QUERY_BUILDER] = $entityManager->getRepository(Company::class)->createQueryBuilder('c');
+
+        $table = $tableFactory->create('test', DoctrineDataLoader::class, [
+            'dataloader_options' => $dataLoaderOptions,
+            'default_limit' => 5,
+        ]);
+
+        $this->assertSame(
+            [1, 2, 3, 4, 5],
+            array_map(
+                fn ($data) => $data->getId(),
+                iterator_to_array($table->getRows())
+            )
+        );
+
+        $twig = self::getContainer()->get(Environment::class);
+
+        $twig->render('table.html.twig', [
+            'table' => $table,
+        ]);
+    }
+
+    public function testRenderDoctrineTableWithoutTurbo()
+    {
+        CompanyFactory::createMany(10);
+
+        $tableFactory = self::getContainer()->get(TableFactory::class);
+
+        $twig = self::getContainer()->get(Environment::class);
+        if ($twig instanceof Environment) {
+            $twig->addGlobal('enable_turbo', false);
+        }
 
         $fakeRequest = Request::create('/', 'GET');
         $fakeRequest->attributes->set('_route', 'dummy');

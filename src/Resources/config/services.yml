@@ -44,3 +44,6 @@ services:
 
         araise\TableBundle\Extension\ExtensionInterface:
             shared: false
+
+    araise\TableBundle\Twig\TableTurboExtension:
+        arguments: [ "%araise_table.enable_turbo%" ]

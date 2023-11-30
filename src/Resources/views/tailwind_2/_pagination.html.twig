@@ -70,80 +70,88 @@
         }]) %}
     {% endif %}
 
-    <footer class="whatwedo_table:footer w-full py-3 px-3 flex items-center justify-between">
-        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-                {% if table.getOption('content_visibility')['content_show_result_label'] %}
-                <p class="whatwedo-utility-paragraph inline-block">
-                    {% set offsetResults = 0 %}
-                    {% if table.rows|length %}{% set offsetResults = pagination.offsetResults + 1 %}{% endif %}
+    {% set hasPagination = paginationLinks|length > 1 %}
+    {% if (
+        (table.getOption('content_visibility')['content_show_result_label'] or
+        table.getOption('content_visibility')['content_show_entry_dropdown'] or
+        table.getOption('content_visibility')['content_show_pagination']) and
+        hasPagination
+    ) %}
+        <footer class="whatwedo_table:footer w-full mt-3 px-3 flex items-center justify-between">
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                    {% if table.getOption('content_visibility')['content_show_result_label'] %}
+                    <p class="whatwedo-utility-paragraph inline-block">
+                        {% set offsetResults = 0 %}
+                        {% if table.rows|length %}{% set offsetResults = pagination.offsetResults + 1 %}{% endif %}
 
-                    {{ 'araise_table.foot.result'|trans({
-                        '{offsetResults}': offsetResults,
-                        '{offsetLength}': pagination.offsetResults + table.rows|length,
-                        '{totalResults}': pagination.totalResults
-                    }) }}
-                    <span class="text-neutral-500 hidden" {{ stimulus_target('@araise/table-bundle/table_select', 'selectedCount') }}>
+                        {{ 'araise_table.foot.result'|trans({
+                            '{offsetResults}': offsetResults,
+                            '{offsetLength}': pagination.offsetResults + table.rows|length,
+                            '{totalResults}': pagination.totalResults
+                        }) }}
+                        <span class="text-neutral-500 hidden" {{ stimulus_target('@araise/table-bundle/table_select', 'selectedCount') }}>
 
-                    </span>
-                </p>
-                {% endif %}
+                        </span>
+                    </p>
+                    {% endif %}
 
-                {% if table.getOption('content_visibility')['content_show_entry_dropdown'] %}
-                <div
-                    {{ stimulus_controller('araise/core-bundle/dropdown') }}
-                    class="whatwedo_table:footer__dropdown relative inline-block text-left pl-4"
-                >
-                    <button
-                        class="whatwedo_table-button--pagination"
-                        {{ stimulus_action('araise/core-bundle/dropdown', 'toggle') }}
-                        type="button"
-                    >
-                        {{ 'araise_table.amount_entries'|trans({'{amount}': table.paginationExtension.limit}) }}
-                        {{ bootstrap_icon('chevron-up', { class: 'inline w-5 h-5 pl-2' }) }}
-                    </button>
-
+                    {% if table.getOption('content_visibility')['content_show_entry_dropdown'] %}
                     <div
-                        {{ stimulus_target('araise/core-bundle/dropdown', 'menu') }}
-                        class="z-50 hidden transition duration-300 transform origin-bottom-left absolute left-3 bottom-11 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-                        data-transition-enter-from="opacity-0 scale-95"
-                        data-transition-enter-to="opacity-100 scale-100"
-                        data-transition-leave-from="opacity-100 scale-100"
-                        data-transition-leave-to="opacity-0 scale-95"
+                        {{ stimulus_controller('araise/core-bundle/dropdown') }}
+                        class="whatwedo_table:footer__dropdown relative inline-block text-left pl-4"
                     >
-                        <div class="py-1 whatwedo-utility-paragraph">
-                            {% for limit in table.option('limit_choices')|filter(limit => limit != table.paginationExtension.limit) %}
-                                <a class="block px-4 py-2 hover:bg-neutral-50"
-                                   data-turbo-frame="whatwedo_table_{{ table.identifier }}"
-                                   href="{{ araise_table_path_replace_arguments({
-                                    (araise_table_parameter(table, 'limit')): limit,
-                                    (araise_table_parameter(table, 'page')): null
-                                }) }}">
-                                    {{- 'araise_table.amount_entries'|trans({'{amount}': limit}) -}}
-                                </a>
-                            {% endfor %}
+                        <button
+                            class="whatwedo_table-button--pagination"
+                            {{ stimulus_action('araise/core-bundle/dropdown', 'toggle') }}
+                            type="button"
+                        >
+                            {{ 'araise_table.amount_entries'|trans({'{amount}': table.paginationExtension.limit}) }}
+                            {{ bootstrap_icon('chevron-up', { class: 'inline w-5 h-5 pl-2' }) }}
+                        </button>
+
+                        <div
+                            {{ stimulus_target('araise/core-bundle/dropdown', 'menu') }}
+                            class="z-50 hidden transition duration-300 transform origin-bottom-left absolute left-3 bottom-11 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                            data-transition-enter-from="opacity-0 scale-95"
+                            data-transition-enter-to="opacity-100 scale-100"
+                            data-transition-leave-from="opacity-100 scale-100"
+                            data-transition-leave-to="opacity-0 scale-95"
+                        >
+                            <div class="py-1 whatwedo-utility-paragraph">
+                                {% for limit in table.option('limit_choices')|filter(limit => limit != table.paginationExtension.limit) %}
+                                    <a class="block px-4 py-2 hover:bg-neutral-50"
+                                       data-turbo-frame="whatwedo_table_{{ table.identifier }}"
+                                       href="{{ araise_table_path_replace_arguments({
+                                        (araise_table_parameter(table, 'limit')): limit,
+                                        (araise_table_parameter(table, 'page')): null
+                                    }) }}">
+                                        {{- 'araise_table.amount_entries'|trans({'{amount}': limit}) -}}
+                                    </a>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
+                    {% endif %}
+                </div>
+
+                {% if table.getOption('content_visibility')['content_show_pagination'] %}
+                <div>
+                    <nav class="whatwedo_table:footer__pagination relative z-0 inline-flex rounded-md shadow-sm -space-x-px whatwedo-utility-bold bg-white">
+                        {% for link in paginationLinks %}
+                            <a
+                                data-turbo-frame="whatwedo_table_{{ table.identifier }}"
+                                class="relative inline-flex items-center w-8 justify-center py-2 border border-neutral-300 transition-colors hover:bg-neutral-100 first:rounded-l-md last:rounded-r-md{% if link.is_current %} bg-neutral-200 font-medium{% endif %}"
+                                href="{{ link.link }}"
+                                title="{{ link.title }}"
+                            >
+                                {{ link.contents|raw }}
+                            </a>
+                        {% endfor %}
+                    </nav>
                 </div>
                 {% endif %}
             </div>
-
-            {% if table.getOption('content_visibility')['content_show_pagination'] %}
-            <div>
-                <nav class="whatwedo_table:footer__pagination relative z-0 inline-flex rounded-md shadow-sm -space-x-px whatwedo-utility-bold bg-white">
-                    {% for link in paginationLinks %}
-                        <a
-                            data-turbo-frame="whatwedo_table_{{ table.identifier }}"
-                            class="relative inline-flex items-center w-8 justify-center py-2 border border-neutral-300 transition-colors hover:bg-neutral-100 first:rounded-l-md last:rounded-r-md{% if link.is_current %} bg-neutral-200 font-medium{% endif %}"
-                            href="{{ link.link }}"
-                            title="{{ link.title }}"
-                        >
-                            {{ link.contents|raw }}
-                        </a>
-                    {% endfor %}
-                </nav>
-            </div>
-            {% endif %}
-        </div>
-    </footer>
+        </footer>
+    {% endif %}
 {% endif %}

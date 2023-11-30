@@ -29,7 +29,7 @@ declare(strict_types=1);
 
 namespace araise\TableBundle\Filter\Type;
 
-use Coduo\ToString\StringConverter;
+use araise\CoreBundle\Util\StringConverter;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -68,7 +68,7 @@ class AjaxOneToManyFilterType extends FilterType
 
         $currentSelection = (int) $value > 0 ? $this->entityManager->getRepository($targetClass)->find((int) $value) : null;
         if ($currentSelection) {
-            $field .= sprintf('<option value="%s">%s</option>', $value, new StringConverter($currentSelection));
+            $field .= sprintf('<option value="%s">%s</option>', $value, StringConverter::toString($currentSelection));
         }
 
         $field .= '</select>';

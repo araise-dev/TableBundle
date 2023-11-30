@@ -27,18 +27,14 @@ All Options are as constants in `Table` class.
 
 Example
 ```php
-public function configureTable(Table $table): void
-    {
-        parent::configureTable($table);
-        $table
-            ->addColumn('firstname')
-            ->addColumn('lastname')
-            ->addColumn('birthday', null, [
-                'sortable' => false,
-                'formatter' => UserBirthdayFormatter::class,
-            ])
-        ;
-    }
+$table
+    ->addColumn('firstname')
+    ->addColumn('lastname')
+    ->addColumn('birthday', null, [
+        'sortable' => false,
+        'formatter' => UserBirthdayFormatter::class,
+    ])
+;
 ```
 
 For the columns you have a few options to tweak how they behave:
@@ -56,13 +52,38 @@ All Options are as constants in `Column` class.
 Action Columns are here to link to other pages (f.ex. link to edit or view).
 This column has a special template to render the links.
 
-### Options
+### Add A Table Action
+You can add your own table actions like this:
+```php
+$table->addAction('test', [
+    Action::OPT_LABEL => 'Test Button',
+    Action::OPT_ROUTE => self::getRoute(Page::SHOW),
+    Action::OPT_ROUTE_PARAMETERS => fn ($row) => [
+        'id' => $row->getId(),
+    ],
+]);
+```
+As per default, the `addAction()`-method will use the `Action` class for your configuration.
 
-- `items`: Array of columns. Every item has this options:
-- `label`: Name of the button
-- `icon`: Icon (in our templates, we're using Font Awesome 4)
-- `button`: Type of button (f.ex. primary, we're using Bootstrap Button's in our base template)
-- `route`: Route to call. Parameter `id` is always given
+To change which rows can use an action, try using the `TableAction` class and its `visibility` option instead:
+```php
+$table->addAction('test', [
+    Action::OPT_LABEL => 'Test Button',
+    Action::OPT_ROUTE => self::getRoute(Page::SHOW),
+    Action::OPT_ROUTE_PARAMETERS => fn ($row) => [
+        'id' => $row->getId(),
+    ],
+    TableAction::OPT_VISIBILITY => fn($row) => $row->getId() % 2 === 0,
+], TableAction::class);
+```
+You can also simply set the `visibility` to a boolean instead of giving it a function:
+```php
+TableAction::OPT_VISIBILITY => false
+```
+
+### Options
+Take a look at the constants on the `Action` or the `TableAction` class.
+You can use all of these to further configure your action.
 
 ## Filters
 
