@@ -29,11 +29,16 @@ class EnumFilterType extends ChoiceFilterType
     public function getOption(string $name): mixed
     {
         $value = parent::getOption($name);
-        if ($name === self::OPT_ENUM_CASES) {
-            foreach ($value as $item) {
-                $value[$item->value] = $this->translator?->trans($item->value) ?? $item->value;
+
+        if ($name === self::OPT_CHOICES) {
+            $enumCases = parent::getOption(self::OPT_ENUM_CASES);
+            $value = [];
+
+            foreach ($enumCases as $case) {
+                $value[$case->value] = $this->translator?->trans($case->value) ?? $case->value;
             }
         }
+
         return $value;
     }
 
