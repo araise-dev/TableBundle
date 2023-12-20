@@ -46,7 +46,7 @@ class ExportManager
      */
     protected function createHeader(Worksheet $sheet, array $tableColumns): void
     {
-        foreach ($tableColumns as $colIndex => $column) {
+        foreach ($tableColumns as $column) {
             if ($column->getOption(Column::OPT_EXPORT)[Column::OPT_EXPORT_EXPORTABLE] === false) {
                 continue;
             }
@@ -58,7 +58,7 @@ class ExportManager
                 );
             }
 
-            $columnIndex = $sheet->getColumnDimensionByColumn($colIndex + 1)->getColumnIndex();
+            $columnIndex = $sheet->getColumnDimensionByColumn(array_search($column->getIdentifier(), array_keys($tableColumns)) + 1)->getColumnIndex();
             $cell = $sheet->getCell($columnIndex.'1');
             $cell->setValueExplicit($value, DataType::TYPE_STRING2);
             $cell->getStyle()->getFont()->setBold(true);

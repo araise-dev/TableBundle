@@ -187,7 +187,7 @@ class Table
      */
     public function getColumns(): array
     {
-        usort($this->columns, fn (Column $a, Column $b) => $b->getOption(Column::OPT_PRIORITY) <=> $a->getOption(Column::OPT_PRIORITY));
+        uasort($this->columns, fn (Column $a, Column $b) => $b->getOption(Column::OPT_PRIORITY) <=> $a->getOption(Column::OPT_PRIORITY));
 
         return $this->columns;
     }
