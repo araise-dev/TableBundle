@@ -36,10 +36,10 @@ class ColumnTest extends KernelTestCase
 
         $columns = $table->getColumns();
 
-        $this->assertSame('name', $columns[0]->getIdentifier());
-        $this->assertSame('city', $columns[1]->getIdentifier());
-        $this->assertSame('country', $columns[2]->getIdentifier());
-        $this->assertSame('taxIdentificationNumber', $columns[3]->getIdentifier());
+        $this->assertSame(0, array_search('name', array_keys($columns)));
+        $this->assertSame(1, array_search('city', array_keys($columns)));
+        $this->assertSame(2, array_search('country', array_keys($columns)));
+        $this->assertSame(3, array_search('taxIdentificationNumber', array_keys($columns)));
     }
 
     public function testColumnPriorityReorder()
@@ -62,10 +62,10 @@ class ColumnTest extends KernelTestCase
 
         $columns = $table->getColumns();
 
-        $this->assertSame('taxIdentificationNumber', $columns[0]->getIdentifier());
-        $this->assertSame('country', $columns[1]->getIdentifier());
-        $this->assertSame('city', $columns[2]->getIdentifier());
-        $this->assertSame('name', $columns[3]->getIdentifier());
+        $this->assertSame(0, array_search('taxIdentificationNumber', array_keys($columns)));
+        $this->assertSame(1, array_search('country', array_keys($columns)));
+        $this->assertSame(2, array_search('city', array_keys($columns)));
+        $this->assertSame(3, array_search('name', array_keys($columns)));
     }
 
     public function testColumnPrioritySameOrder()
@@ -88,10 +88,10 @@ class ColumnTest extends KernelTestCase
 
         $columns = $table->getColumns();
 
-        $this->assertSame('taxIdentificationNumber', $columns[0]->getIdentifier());
-        $this->assertSame('city', $columns[1]->getIdentifier());
-        $this->assertSame('country', $columns[2]->getIdentifier());
-        $this->assertSame('name', $columns[3]->getIdentifier());
+        $this->assertSame(0, array_search('taxIdentificationNumber', array_keys($columns)));
+        $this->assertSame(1, array_search('city', array_keys($columns)));
+        $this->assertSame(2, array_search('country', array_keys($columns)));
+        $this->assertSame(3, array_search('name', array_keys($columns)));
     }
 
     protected function prepareTable(): Table
