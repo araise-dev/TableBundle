@@ -62,13 +62,10 @@ class TableExtension extends AbstractExtension
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        $attributes = array_filter(
-            $request->attributes->all(),
-            static fn ($key) => ! str_starts_with($key, '_'),
-            ARRAY_FILTER_USE_KEY
-        );
+        $attributes = $this->filterKeys($request->attributes->all(), fn($key) => !str_starts_with($key, '_'));
+        $queryParameters = $this->filterKeys($request->query->all(), fn($key) => !str_ends_with($key, RouterHelper::PARAMETER_FILTER_PREDEFINED));
 
-        $parameters = array_replace(array_merge($attributes, $request->query->all()), $arguments);
+        $parameters = array_replace(array_merge($attributes, $queryParameters), $arguments);
         if ($returnParameters) {
             return $this->post2Name($parameters);
         }
@@ -116,5 +113,10 @@ class TableExtension extends AbstractExtension
             }
         }
         return $result;
+    }
+
+    protected function filterKeys($array, $callback): array
+    {
+        return array_filter($array, $callback, ARRAY_FILTER_USE_KEY);
     }
 }

@@ -188,7 +188,7 @@
 
                                 <div class="px-4 sm:px-6" {{ stimulus_target('araise/table-bundle/filter', 'filterGroupList') }}>
                                     {{ _self.filter_header(table) }}
-                                    {% for groupIndex, group in table.filterExtension.getFilterData(false) %}
+                                    {% for groupIndex, group in table.filterExtension.getFilterData(true) %}
                                         {{ _self.filter_group(table, groupIndex, group) }}
                                     {% else %}
                                         {{ _self.filter_group(table, 0, []) }}
