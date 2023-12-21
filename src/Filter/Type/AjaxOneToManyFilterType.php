@@ -58,7 +58,7 @@ class AjaxOneToManyFilterType extends FilterType
         ];
     }
 
-    public function getValueField(?string $value = '0'): string
+    public function getValueField(?string $value = '0', ?string $operator = null): string
     {
         $targetClass = $this->getOption(static::OPT_TARGET_CLASS);
         $field = sprintf(

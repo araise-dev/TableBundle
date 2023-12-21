@@ -32,13 +32,14 @@ class DatetimeFilterType extends FilterType
         ];
     }
 
-    public function getValueField(?string $value = null): string
+    public function getValueField(?string $value = null, ?string $operator = null): string
     {
         $date = \DateTime::createFromFormat(static::getQueryDataFormat(), (string) $value) ?: new \DateTime();
+        $value = $date->format(static::getDateFormat());
 
         return sprintf(
             '<input type="text" name="{name}" value="%s" class="form-control" data-provide="datetimepicker" data-date-format="dd.mm.yyyy HH:ii">',
-            $date->format(static::getDateFormat())
+            $operator !== static::CRITERIA_IS_EMPTY ? $value : ''
         );
     }
 

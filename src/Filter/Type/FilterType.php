@@ -25,10 +25,10 @@ abstract class FilterType implements FilterTypeInterface
 
     protected array $options = [];
 
-    public function __construct(?string $coumn = null, array $joins = [])
+    public function __construct(?string $column = null, array $joins = [])
     {
         $this->options = [
-            self::OPT_COLUMN => $coumn,
+            self::OPT_COLUMN => $column,
             self::OPT_JOINS => $joins,
         ];
     }

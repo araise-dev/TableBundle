@@ -35,7 +35,7 @@ class TextFilterType extends FilterType
         ];
     }
 
-    public function getValueField(?string $value = ''): string
+    public function getValueField(?string $value = '', ?string $operator = null): string
     {
         if (! $value) {
             $value = '';

@@ -24,7 +24,7 @@
             </select>
         </div>
         <div class="whatwedo-table-filter-amount flex-none w-4/23">
-            {{ filter.type.valueField(filterValue)|replace({ '{name}': araise_table_parameter(table, 'filter_value')~indexSuffix })|raw }}
+            {{ filter.type.valueField(filterValue, filterOperator)|replace({ '{name}': araise_table_parameter(table, 'filter_value')~indexSuffix })|raw }}
         </div>
         <div class="whatwedo-table-filter-actions flex-auto text-right items-center w-2/12">
             <div class="flex justify-end">

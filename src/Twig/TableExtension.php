@@ -62,8 +62,8 @@ class TableExtension extends AbstractExtension
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        $attributes = $this->filterKeys($request->attributes->all(), fn($key) => !str_starts_with($key, '_'));
-        $queryParameters = $this->filterKeys($request->query->all(), fn($key) => !str_ends_with($key, RouterHelper::PARAMETER_FILTER_PREDEFINED));
+        $attributes = $this->filterKeys($request->attributes->all(), fn ($key) => !str_starts_with($key, '_'));
+        $queryParameters = $this->filterKeys($request->query->all(), fn ($key) => !str_ends_with($key, RouterHelper::PARAMETER_FILTER_PREDEFINED));
 
         $parameters = array_replace(array_merge($attributes, $queryParameters), $arguments);
         if ($returnParameters) {
