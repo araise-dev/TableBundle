@@ -20,6 +20,8 @@ class Table
 {
     public const OPT_TITLE = 'title';
 
+    public const OPT_META = 'meta';
+
     public const OPT_PRIMARY_LINK = 'primary_link';
 
     public const OPT_ATTRIBUTES = 'attributes';
@@ -85,6 +87,7 @@ class Table
     {
         $resolver->setDefaults([
             self::OPT_TITLE => null,
+            self::OPT_META => null,
             self::OPT_PRIMARY_LINK => null,
             self::OPT_ATTRIBUTES => [],
             self::OPT_SEARCHABLE => false,
@@ -114,6 +117,7 @@ class Table
         ]);
 
         $resolver->setAllowedTypes(self::OPT_TITLE, ['null', 'string']);
+        $resolver->setAllowedTypes(self::OPT_META, ['null', 'string']);
         $resolver->setAllowedTypes(self::OPT_PRIMARY_LINK, ['null', 'callable']);
         $resolver->setAllowedTypes(self::OPT_ATTRIBUTES, ['array']);
         $resolver->setAllowedTypes(self::OPT_SEARCHABLE, ['boolean']);
