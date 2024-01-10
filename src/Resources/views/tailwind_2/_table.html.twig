@@ -205,11 +205,14 @@
                         {% if column.option('link_the_column_content') and columnLink|default(false) %}</a>{% endif %}
                     </td>
                 {% endfor %}
-                {% set tableActions = table.actions | filter(action => not action.getOption('voter_attribute') or is_granted(action.getOption('voter_attribute'), row)) %}
-                {% if tableActions|length %}
+                {% if table.actions|length %}
                     <td class="whatwedo_table-actions pr-6 align-top">
 
-                        {% set tableActionsVisible = tableActions | filter(action => not attribute(action, 'visibility') is defined or action.visibility(row)) %}
+                        {% set tableActionsVisible = table.actions
+                            | filter(action => not action.getOption('voter_attribute') or is_granted(action.getOption('voter_attribute'), row))
+                            | filter(action => not attribute(action, 'visibility') is defined or action.visibility(row))
+                        %}
+
                         {% if tableActionsVisible|length %}
                             <div
                                 class="relative flex justify-end items-center" {{ stimulus_controller('araise/core-bundle/dropdown') }}>
