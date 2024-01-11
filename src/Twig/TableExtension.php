@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace araise\TableBundle\Twig;
 
 use araise\TableBundle\Factory\TableFactory;
+use araise\TableBundle\Filter\Type\FilterOperatorDto;
 use araise\TableBundle\Helper\RouterHelper;
 use araise\TableBundle\Table\Column;
 use araise\TableBundle\Table\Table;
@@ -50,7 +51,14 @@ class TableExtension extends AbstractExtension
         return [
             new TwigFilter('araise_table_filter_operators', function ($data) {
                 foreach (array_keys($data) as $key) {
-                    $data[$key] = $this->translator->trans($data[$key]);
+                    $data[$key] = $this->translator->trans(strval($data[$key]));
+                }
+
+                return json_encode($data, JSON_THROW_ON_ERROR);
+            }),
+            new TwigFilter('araise_table_filter_operators_options', function ($data) {
+                foreach (array_keys($data) as $key) {
+                    $data[$key] = ($data[$key] instanceof FilterOperatorDto ? $data[$key] : new FilterOperatorDto($key))->getOptions();
                 }
 
                 return json_encode($data, JSON_THROW_ON_ERROR);
