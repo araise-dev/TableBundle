@@ -26,7 +26,7 @@ class NumberFilterType extends FilterType
         ];
     }
 
-    public function getValueField(?string $value = null): string
+    public function getValueField(?string $value = null, ?string $operator = null): string
     {
         if (! is_numeric($value)) {
             $value = '0';

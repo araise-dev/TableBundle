@@ -36,7 +36,7 @@ class AjaxRelationFilterType extends FilterType
         ];
     }
 
-    public function getValueField(?string $value = '0'): string
+    public function getValueField(?string $value = '0', ?string $operator = null): string
     {
         $jsonSearchUrl = $this->getOption(static::OPT_JSON_SEARCH_URL);
         $field = sprintf(

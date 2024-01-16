@@ -30,12 +30,16 @@ class TextFilterType extends FilterType
             static::CRITERIA_NOT_EQUAL => 'araise_table.filter.operator.not_equal',
             static::CRITERIA_STARTS_WITH => 'araise_table.filter.operator.starts_with',
             static::CRITERIA_ENDS_WITH => 'araise_table.filter.operator.ends_with',
-            static::CRITERIA_IS_EMPTY => 'araise_table.filter.operator.is_empty',
-            static::CRITERIA_IS_NOT_EMPTY => 'araise_table.filter.operator.is_not_empty',
+            static::CRITERIA_IS_EMPTY => new FilterOperatorDto('araise_table.filter.operator.is_empty', [
+                FilterOperatorDto::OPT_HAS_FILTER_VALUE => false,
+            ]),
+            static::CRITERIA_IS_NOT_EMPTY => new FilterOperatorDto('araise_table.filter.operator.is_not_empty', [
+                FilterOperatorDto::OPT_HAS_FILTER_VALUE => false,
+            ]),
         ];
     }
 
-    public function getValueField(?string $value = ''): string
+    public function getValueField(?string $value = '', ?string $operator = null): string
     {
         if (! $value) {
             $value = '';

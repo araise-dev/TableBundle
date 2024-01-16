@@ -20,7 +20,7 @@ class BooleanFilterType extends FilterType
         ];
     }
 
-    public function getValueField(?string $value = '1'): string
+    public function getValueField(?string $value = '1', ?string $operator = null): string
     {
         return sprintf(
             '<select name="{name}" class="form-control"><option value="1" %s>ausgewählt</option><option value="0" %s>nicht ausgewählt</option></select>',
