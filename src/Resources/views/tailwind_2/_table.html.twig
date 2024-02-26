@@ -255,7 +255,7 @@
                     class="whatwedo_table-subtable hidden"
                     {{ stimulus_target('araise/table-bundle/accordion', 'content') }}
                 >
-                    <td colspan="{{ table.getColspan(tableActions|length > 0 ? 1 : 0) }}">
+                    <td colspan="{{ table.getColspan(tableActionsVisible|length > 0 ? 1 : 0) }}">
                         {% with {'table':subTable} only %}{{ araise_table_only_render(table) }}{% endwith %}
                     </td>
                 </tr>

@@ -40,7 +40,7 @@ class AjaxRelationFilterType extends FilterType
     {
         $jsonSearchUrl = $this->getOption(static::OPT_JSON_SEARCH_URL);
         $field = sprintf(
-            '<select name="{name}" class="form-control" data-araise--core-bundle--select-url-value="%s" data-controller="araise--core-bundle--select" data-araise--core-bundle--select-required-value="0">',
+            '<select name="{name}" class="form-control" data-araise--core-bundle--combobox-url-value="%s" data-controller="araise--core-bundle--combobox" data-araise--core-bundle--combobox-required-value="0">',
             $jsonSearchUrl
         );
         $targetClass = $this->getOption(static::OPT_TARGET_CLASS);
