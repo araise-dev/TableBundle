@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## v1.0.7
+ - More documentation and better styling of the documentation
+ - Added a new optional parameter to the `FilterTypeInterface::getValueField()` method to allow for more complex value fields.
+ - Introduced `FilterOperatorDto` to allow for more complex filter operators
+ - Improved Relation Content styling
+ - Predefined filters will show up in the filter dropdown
+
 ## v1.0.6
  - Removed dependency to `coduo/php-to-string` 
  - Added new bundle configuration `enable_turbo` (default `false`)
