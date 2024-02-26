@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-    static targets = ['filters', 'filterspanel', 'backdrop', 'filterGroupList', 'singleFilterRemove', 'filterGroupFilterHeaderFirst', 'filterGroupFilterHeaderOthers', 'dropdown']
+    static targets = ['filters', 'filterspanel', 'backdrop', 'filterGroupList', 'singleFilterRemove', 'filterGroupFilterHeaderFirst', 'filterGroupFilterHeaderOthers', 'dropdown',]
 
     connect() {
         this.updateGui();
@@ -15,10 +15,13 @@ export default class extends Controller {
         const valueField = parentBlock.querySelector('[name^="index_filter_value"]');
 
         operatorSelect.options.length = 0;
+        const operatorsOptions = JSON.parse(choosenOption.getAttribute('data-operators-options'));
         Object
-            .entries(JSON.parse(choosenOption.getAttribute('data-operator-options')))
+            .entries(JSON.parse(choosenOption.getAttribute('data-operators')))
             .forEach(([key, value]) => {
-                operatorSelect.add(new Option(value, key));
+                const option = new Option(value, key);
+                option.setAttribute('data-has-filter-value', operatorsOptions[key]['has_filter_value']);
+                operatorSelect.add(option);
             })
         ;
 
@@ -29,6 +32,20 @@ export default class extends Controller {
         const template = choosenOption.getAttribute('data-value-template')
         const doc = parser.parseFromString(template.replace(/{name}/g, valueField.getAttribute('name')), 'text/html');
         valueField.parentNode.replaceChild(doc.body, valueField);
+    }
+
+    filterOperatorChanged(event) {
+        this.updateFilterOperatorValueGui(event.target);
+    }
+
+    updateFilterOperatorValueGui(operatorSelect) {
+        const option = operatorSelect.options[operatorSelect.selectedIndex];
+        const valueField = operatorSelect.parentElement.nextElementSibling;
+        if (option.getAttribute('data-has-filter-value') === 'true') {
+            valueField.classList.remove('hidden');
+        } else {
+            valueField.classList.add('hidden');
+        }
     }
 
     open() {
@@ -179,6 +196,10 @@ export default class extends Controller {
         if (this.filterGroupFilterHeaderOthersTargets.length > 0) {
             this.filterGroupFilterHeaderOthersTarget.classList.add('hidden');
         }
+
+        document.querySelectorAll('select[name^="index_filter_operator"]')
+            .forEach((element) => this.updateFilterOperatorValueGui(element))
+        ;
     }
 
     reset(event) {

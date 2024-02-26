@@ -8,7 +8,8 @@
                 {% for f in filters %}
                     <option
                         value="{{ f.acronym }}"
-                        data-operator-options="{{ f.type.operators|araise_table_filter_operators }}"
+                        data-operators="{{ f.type.operators|araise_table_filter_operators }}"
+                        data-operators-options="{{ f.type.operators|araise_table_filter_operators_options }}"
                         data-value-template="{{ f.type.valueField|raw|e }}"
                         class="form-control"
                         {% if f.acronym == filter.acronym %}selected="selected"{% endif %}
@@ -17,14 +18,18 @@
             </select>
         </div>
         <div class="whatwedo-table-filter-selection flex-initial w-3/12">
-            <select name="{{ araise_table_parameter(table, 'filter_operator')~indexSuffix }}" class="w-full cursor-pointer whatwedo-utility-paragraph whatwedo-crud-button--action-white">
+            <select
+                {{ stimulus_action('araise/table-bundle/filter', 'filterOperatorChanged') }}
+                name="{{ araise_table_parameter(table, 'filter_operator')~indexSuffix }}"
+                class="w-full cursor-pointer whatwedo-utility-paragraph whatwedo-crud-button--action-white"
+            >
                 {% for key, value in filter.type.operators %}
-                    <option value="{{ key }}" {% if key == filterOperator %}selected="selected"{% endif %}>{{ value|trans }}</option>
+                    <option data-has-filter-value="{{ value.getOption('has_filter_value') ?? true ? 'true' : 'false' }}" value="{{ key }}" {% if key == filterOperator %}selected="selected"{% endif %}>{{ value|trans }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="whatwedo-table-filter-amount flex-none w-4/23">
-            {{ filter.type.valueField(filterValue)|replace({ '{name}': araise_table_parameter(table, 'filter_value')~indexSuffix })|raw }}
+            {{ filter.type.valueField(filterValue, filterOperator)|replace({ '{name}': araise_table_parameter(table, 'filter_value')~indexSuffix })|raw }}
         </div>
         <div class="whatwedo-table-filter-actions flex-auto text-right items-center w-2/12">
             <div class="flex justify-end">
@@ -188,7 +193,7 @@
 
                                 <div class="px-4 sm:px-6" {{ stimulus_target('araise/table-bundle/filter', 'filterGroupList') }}>
                                     {{ _self.filter_header(table) }}
-                                    {% for groupIndex, group in table.filterExtension.getFilterData(false) %}
+                                    {% for groupIndex, group in table.filterExtension.getFilterData(true) %}
                                         {{ _self.filter_group(table, groupIndex, group) }}
                                     {% else %}
                                         {{ _self.filter_group(table, 0, []) }}

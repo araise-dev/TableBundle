@@ -20,7 +20,7 @@ interface FilterTypeInterface
 
     public function getOperators(): array;
 
-    public function getValueField(?string $value): string;
+    public function getValueField(?string $value, ?string $operator): string;
 
     public function toDql(string $operator, string $value, string $parameterName, QueryBuilder $queryBuilder);
 

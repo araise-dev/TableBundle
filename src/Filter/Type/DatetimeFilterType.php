@@ -18,6 +18,8 @@ class DatetimeFilterType extends FilterType
 
     public const CRITERIA_IN_YEAR = 'in_year';
 
+    public const CRITERIA_IS_EMPTY = 'is_empty';
+
     public function getOperators(): array
     {
         return [
@@ -26,16 +28,20 @@ class DatetimeFilterType extends FilterType
             static::CRITERIA_BEFORE => 'araise_table.filter.operator.before',
             static::CRITERIA_AFTER => 'araise_table.filter.operator.after',
             static::CRITERIA_IN_YEAR => 'araise_table.filter.operator.same_year',
+            static::CRITERIA_IS_EMPTY => new FilterOperatorDto('araise_table.filter.operator.is_empty', [
+                FilterOperatorDto::OPT_HAS_FILTER_VALUE => false,
+            ]),
         ];
     }
 
-    public function getValueField(?string $value = null): string
+    public function getValueField(?string $value = null, ?string $operator = null): string
     {
         $date = \DateTime::createFromFormat(static::getQueryDataFormat(), (string) $value) ?: new \DateTime();
+        $value = $date->format(static::getDateFormat());
 
         return sprintf(
             '<input type="text" name="{name}" value="%s" class="form-control" data-provide="datetimepicker" data-date-format="dd.mm.yyyy HH:ii">',
-            $date->format(static::getDateFormat())
+            $operator !== static::CRITERIA_IS_EMPTY ? $value : ''
         );
     }
 
@@ -80,6 +86,8 @@ class DatetimeFilterType extends FilterType
                     $queryBuilder->expr()->gte($this->getColumn(), sprintf(':%s', $parameterName.'_start')),
                     $queryBuilder->expr()->lte($this->getColumn(), sprintf(':%s', $parameterName.'_end'))
                 );
+            case static::CRITERIA_IS_EMPTY:
+                return $queryBuilder->expr()->isNull($column);
         }
 
         return null;

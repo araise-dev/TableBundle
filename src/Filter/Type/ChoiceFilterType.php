@@ -23,7 +23,7 @@ class ChoiceFilterType extends FilterType
         ];
     }
 
-    public function getValueField(?string $value = null): string
+    public function getValueField(?string $value = null, ?string $operator = null): string
     {
         $result = '<select name="{name}" class="form-control"><option value=""></option>';
 
