@@ -3,6 +3,9 @@
 
     <header class="whatwedo_table:header sm:flex sm:justify-between mb-4">
         <div class="whatwedo_table:header__title flex-1 min-w-0 whatwedo-utility-heading-1 sm:truncate">
+            {% if table.option('meta') and table.option('meta') != table.option('title') %}
+                <strong class="block mb-1 text-base font-semibold text-neutral-700">{{ table.option('meta') }}</strong>
+            {% endif %}
             {% if table.option('title') %}
                 <h1>
                     {{ table.option('title')|trans }}
