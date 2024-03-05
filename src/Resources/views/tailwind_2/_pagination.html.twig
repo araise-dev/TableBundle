@@ -153,5 +153,11 @@
                 {% endif %}
             </div>
         </footer>
+    {% else %}
+        <footer class="whatwedo_table:footer w-full my-3 px-3 flex items-center justify-between">
+            <p class="whatwedo-utility-paragraph inline-block">
+                <span class="text-neutral-500 hidden" {{ stimulus_target('@araise/table-bundle/table_select', 'selectedCount') }}/>
+            </p>
+        </footer>
     {% endif %}
 {% endif %}
