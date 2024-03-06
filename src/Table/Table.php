@@ -52,6 +52,8 @@ class Table
 
     public const OPT_CONTENT_SHOW_ENTRY_DROPDOWN = 'content_show_entry_dropdown';
 
+    public const OPT_CONTENT_SHOW_PAGINATION_IF_PAGE_TOTAL_LESS_THAN_LIMIT = 'content_show_pagination_if_page_total_less_than_limit';
+
     public const OPT_SUB_TABLE_LOADER = 'sub_table_loader';
 
     protected array $columns = [];
@@ -96,16 +98,12 @@ class Table
                 $contentResolver
                     ->setDefaults([
                         self::OPT_CONTENT_SHOW_PAGINATION => true,
-                    ])
-                    ->setDefaults([
                         self::OPT_CONTENT_SHOW_RESULT_LABEL => true,
-                    ])
-                    ->setDefaults([
                         self::OPT_CONTENT_SHOW_HEADER => true,
-                    ])
-                    ->setDefaults([
                         self::OPT_CONTENT_SHOW_ENTRY_DROPDOWN => true,
-                    ]);
+                        self::OPT_CONTENT_SHOW_PAGINATION_IF_PAGE_TOTAL_LESS_THAN_LIMIT => true,
+                    ])
+                ;
             },
             self::OPT_THEME => '@araiseTable/tailwind_2_layout.html.twig',
             self::OPT_DEFINITION => null,

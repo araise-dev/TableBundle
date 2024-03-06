@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace araise\TableBundle\Filter\Type;
 
+use Doctrine\ORM\QueryBuilder;
+
 class DateFilterType extends DatetimeFilterType
 {
     public function getValueField(?string $value = null, ?string $operator = null): string
@@ -12,9 +14,31 @@ class DateFilterType extends DatetimeFilterType
         $value = $date->format(static::getDateFormat());
 
         return sprintf(
-            '<input type="text" name="{name}" value="%s" class="form-control" data-provide="datetimepicker" data-date-format="dd.mm.yyyy" data-min-view="2">',
+            '<input type="date" name="{name}" value="%s">',
             $operator !== static::CRITERIA_IS_EMPTY ? $value : ''
         );
+    }
+
+    public function toDql(string $operator, string $value, string $parameterName, QueryBuilder $queryBuilder)
+    {
+        if ($operator === static::CRITERIA_EQUAL) {
+            $date = $this->prepareDateValue($value);
+            $startOfDate = (clone $date)->setTime(0, 0);
+            $endOfDate = (clone $date)->setTime(23, 59, 59);
+            $queryBuilder->setParameter($parameterName.'_start', $startOfDate);
+            $queryBuilder->setParameter($parameterName.'_end', $endOfDate);
+            return $queryBuilder->expr()->andX(
+                $queryBuilder->expr()->gte(
+                    $this->getOption(static::OPT_COLUMN),
+                    sprintf(':%s', $parameterName.'_start')
+                ),
+                $queryBuilder->expr()->lte(
+                    $this->getOption(static::OPT_COLUMN),
+                    sprintf(':%s', $parameterName.'_end')
+                )
+            );
+        }
+        return parent::toDql($operator, $value, $parameterName, $queryBuilder);
     }
 
     protected function prepareDateValue(string $value): \DateTime
@@ -24,7 +48,7 @@ class DateFilterType extends DatetimeFilterType
 
     protected static function getDateFormat(): string
     {
-        return 'd.m.Y';
+        return 'Y-m-d';
     }
 
     protected static function getQueryDataFormat(): string

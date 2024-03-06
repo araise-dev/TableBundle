@@ -66,14 +66,18 @@ class TableExtension extends AbstractExtension
         ];
     }
 
-    public function pathReplaceArguments(array $arguments, bool $returnParameters = false): string|array
+    public function pathReplaceArguments(array $arguments, bool $returnParameters = false, bool $filterPredefined = false): string|array
     {
         $request = $this->requestStack->getCurrentRequest();
 
         $attributes = $this->filterKeys($request->attributes->all(), fn ($key) => !str_starts_with($key, '_'));
-        $queryParameters = $this->filterKeys($request->query->all(), fn ($key) => !str_ends_with($key, RouterHelper::PARAMETER_FILTER_PREDEFINED));
+        $queryParameters = $request->query->all();
+        if ($filterPredefined) {
+            $queryParameters = $this->filterKeys($queryParameters, fn ($key) => !str_ends_with($key, RouterHelper::PARAMETER_FILTER_PREDEFINED));
+        }
 
         $parameters = array_replace(array_merge($attributes, $queryParameters), $arguments);
+
         if ($returnParameters) {
             return $this->post2Name($parameters);
         }
