@@ -70,7 +70,7 @@
         }]) %}
     {% endif %}
 
-    {% set hasPagination = paginationLinks|length > 1 %}
+    {% set hasPagination = table.getOption('content_visibility')['content_show_pagination_if_page_total_less_than_limit'] or paginationLinks|length > 1 %}
     {% if (
         (table.getOption('content_visibility')['content_show_result_label'] or
         table.getOption('content_visibility')['content_show_entry_dropdown'] or
@@ -152,6 +152,12 @@
                 </div>
                 {% endif %}
             </div>
+        </footer>
+    {% else %}
+        <footer class="whatwedo_table:footer w-full my-3 px-3 flex items-center justify-between">
+            <p class="whatwedo-utility-paragraph inline-block">
+                <span class="text-neutral-500 hidden" {{ stimulus_target('@araise/table-bundle/table_select', 'selectedCount') }}/>
+            </p>
         </footer>
     {% endif %}
 {% endif %}

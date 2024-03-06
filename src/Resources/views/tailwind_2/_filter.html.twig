@@ -162,8 +162,8 @@
                     {{ stimulus_target('araise/table-bundle/filter', 'filterspanel') }}
                 >
 
-                    <form action="{{ araise_table_path_replace_arguments({ (araise_table_parameter(table, 'page')) : 1 }) }}" class="w-screen max-w-3xl">
-                        {% for name,value in araise_table_path_replace_arguments({ (araise_table_parameter(table, 'page')) : 1 }, true) %}
+                    <form action="{{ araise_table_path_replace_arguments({ (araise_table_parameter(table, 'page')) : 1 }, false, true) }}" class="w-screen max-w-3xl">
+                        {% for name,value in araise_table_path_replace_arguments({ (araise_table_parameter(table, 'page')) : 1 }, true, true) %}
                             {# only load filter unrelevant query parameters #}
                             {% if not (name matches '/.+_filter_(column|operator|value).+/') %}
                                 <input type="hidden" name="{{ name }}" value="{{ value }}">

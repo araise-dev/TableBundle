@@ -21,6 +21,7 @@ All Options are as constants in `Table` class.
 - - `content_show_result_label`: Boolean, default: `true`
 - - `content_show_header`: Boolean, default: `true`
 - - `content_show_entry_dropdown`: Boolean, default: `true`
+- - `content_show_pagination_if_page_total_less_than_limit`: Boolean, default: `true`
 
 
 ## Column Options

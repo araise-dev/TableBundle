@@ -40,7 +40,7 @@ class DatetimeFilterType extends FilterType
         $value = $date->format(static::getDateFormat());
 
         return sprintf(
-            '<input type="text" name="{name}" value="%s" class="form-control" data-provide="datetimepicker" data-date-format="dd.mm.yyyy HH:ii">',
+            '<input type="datetime-local" name="{name}" value="%s">',
             $operator !== static::CRITERIA_IS_EMPTY ? $value : ''
         );
     }
@@ -83,8 +83,8 @@ class DatetimeFilterType extends FilterType
                 $queryBuilder->setParameter($parameterName.'_end', $endYear->format(static::getQueryDataFormat()));
 
                 return $queryBuilder->expr()->andX(
-                    $queryBuilder->expr()->gte($this->getColumn(), sprintf(':%s', $parameterName.'_start')),
-                    $queryBuilder->expr()->lte($this->getColumn(), sprintf(':%s', $parameterName.'_end'))
+                    $queryBuilder->expr()->gte($column, sprintf(':%s', $parameterName.'_start')),
+                    $queryBuilder->expr()->lte($column, sprintf(':%s', $parameterName.'_end'))
                 );
             case static::CRITERIA_IS_EMPTY:
                 return $queryBuilder->expr()->isNull($column);
@@ -100,11 +100,11 @@ class DatetimeFilterType extends FilterType
 
     protected static function getDateFormat(): string
     {
-        return 'd.m.Y H:i';
+        return 'Y-m-d\TH:i';
     }
 
     protected static function getQueryDataFormat(): string
     {
-        return 'Y-m-d H:i:s';
+        return 'Y-m-d\TH:i';
     }
 }
