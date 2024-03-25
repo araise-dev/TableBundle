@@ -150,7 +150,7 @@ class FilterGuesser
         return [...$annotations, ...$attributes];
     }
 
-    private function getFieldMapping(\ReflectionProperty $property): array
+    private function getFieldMapping(\ReflectionProperty $property): array|object
     {
         $meta = $this->entityManager->getClassMetadata($property->getDeclaringClass()->getName());
         $mappings = array_merge($meta->fieldMappings, $meta->associationMappings);
@@ -201,8 +201,11 @@ class FilterGuesser
         }
 
         $fieldMappings = $this->getFieldMapping($property);
-        if (isset($fieldMappings[$what])) {
+        if (is_array($fieldMappings) && isset($fieldMappings[$what])) {
             return $fieldMappings[$what];
+        }
+        if (is_object($fieldMappings) && property_exists($fieldMappings, $what)) {
+            return $fieldMappings->{$what};
         }
 
         return null;

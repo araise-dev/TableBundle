@@ -8,11 +8,14 @@ doctrine:
                 charset: utf8mb4
                 default_table_options:
                     charset: utf8mb4
-                    collate: utf8mb4_unicode_ci
+                    collation: utf8mb4_unicode_ci
                 url: '%env(resolve:DATABASE_URL)%'
     orm:
         default_entity_manager: default
         auto_generate_proxy_classes: true
+        enable_lazy_ghost_objects: true
+        controller_resolver:
+            auto_mapping: true
         entity_managers:
             default:
                 connection: default
