@@ -27,5 +27,5 @@ services:
         public: true
 
 
-    araise\TableBundle\Manager\ExportManager:
+    araise\TableBundle\Exporter\TableExporter:
         public: true
