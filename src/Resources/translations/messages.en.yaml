@@ -1,6 +1,7 @@
 araise_table:
     download:
         info: What would you like to download?
+        choices: Choose Export
     all: All pages
     page: Current page
     or: Or

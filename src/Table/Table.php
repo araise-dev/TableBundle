@@ -8,6 +8,7 @@ use araise\CoreBundle\Action\Action;
 use araise\CoreBundle\Manager\FormatterManager;
 use araise\TableBundle\DataLoader\DataLoaderInterface;
 use araise\TableBundle\Event\DataLoadEvent;
+use araise\TableBundle\Exporter\ExporterInterface;
 use araise\TableBundle\Extension\ExtensionInterface;
 use araise\TableBundle\Extension\FilterExtension;
 use araise\TableBundle\Extension\PaginationExtension;
@@ -67,6 +68,8 @@ class Table
     protected bool $loaded = false;
 
     protected ?Table $parent = null;
+
+    protected array $exporter = [];
 
     public function __construct(
         protected string $identifier,
@@ -296,6 +299,36 @@ class Table
         }
 
         return $this;
+    }
+
+    public function addExporter(string $acronym, ExporterInterface $exporter): void
+    {
+        $this->exporter[$acronym]['exporter'] = $exporter;
+        $label = $this->options[self::OPT_DEFINITION] ? sprintf('wwd.%s.exporter.%s', $this->options[self::OPT_DEFINITION]->getEntityAlias(), $acronym) : $acronym;
+        $this->exporter[$acronym]['label'] = $label;
+    }
+
+    public function removeExporter(string $acronym): static
+    {
+        if (isset($this->exporter[$acronym])) {
+            unset($this->exporter[$acronym]);
+        }
+
+        return $this;
+    }
+
+    public function getExporter(string $acronym): ?ExporterInterface
+    {
+        if (isset($this->exporter[$acronym])) {
+            return $this->exporter[$acronym]['exporter'];
+        }
+
+        return null;
+    }
+
+    public function getExporters(): array
+    {
+        return $this->exporter;
     }
 
     public function getRows(): \Traversable

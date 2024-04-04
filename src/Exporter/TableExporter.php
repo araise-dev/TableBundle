@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace araise\TableBundle\Manager;
+namespace araise\TableBundle\Exporter;
 
 use araise\CoreBundle\Manager\FormatterManager;
 use araise\TableBundle\Table\Column;
@@ -13,7 +13,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ExportManager
+class TableExporter implements ExporterInterface
 {
     private array $reports = [];
 
@@ -23,9 +23,8 @@ class ExportManager
     ) {
     }
 
-    public function createSpreadsheet(Table $table): Spreadsheet
+    public function createSpreadsheet(Table $table, $spreadsheet = new Spreadsheet()): Spreadsheet
     {
-        $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
         $tableColumns = $table->getColumns();
