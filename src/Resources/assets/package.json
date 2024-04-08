@@ -9,6 +9,12 @@
                 "fetch": "eager",
                 "enabled": true
             },
+            "exporter": {
+                "main": "controllers/exporter_controller.js",
+                "webpackMode": "eager",
+                "fetch": "eager",
+                "enabled": true
+            },
             "table_select": {
                 "main": "controllers/table_select_controller.js",
                 "webpackMode": "eager",

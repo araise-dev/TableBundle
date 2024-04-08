@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace araise\TableBundle\Tests;
 
 use araise\TableBundle\DataLoader\DoctrineDataLoader;
+use araise\TableBundle\Exporter\TableExporter;
 use araise\TableBundle\Factory\TableFactory;
-use araise\TableBundle\Manager\ExportManager;
 use araise\TableBundle\Table\Table;
 use araise\TableBundle\Tests\App\Entity\Company;
 use araise\TableBundle\Tests\App\Factory\CompanyFactory;
@@ -36,10 +36,10 @@ class ExportTest extends KernelTestCase
             ->addColumn('country')
             ->addColumn('taxIdentificationNumber');
 
-        /** @var ExportManager $exportManager */
-        $exportManager = self::getContainer()->get(ExportManager::class);
+        /** @var TableExporter $tableExporter */
+        $tableExporter = self::getContainer()->get(TableExporter::class);
 
-        $sheet = $exportManager->createSpreadsheet($table);
+        $sheet = $tableExporter->createSpreadsheet($table);
 
         $this->assertNotNull($sheet);
 
