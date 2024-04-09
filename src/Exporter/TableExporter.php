@@ -10,7 +10,6 @@ use araise\TableBundle\Table\Table;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TableExporter implements ExporterInterface
@@ -69,14 +68,13 @@ class TableExporter implements ExporterInterface
      */
     protected function createTable(Worksheet $sheet, Table $table, array $tableColumns): void
     {
-        $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($table->getRows() as $rowIndex => $row) {
             $colIndex = 1;
             foreach ($tableColumns as $column) {
                 if ($column->getOption(Column::OPT_EXPORT)[Column::OPT_EXPORT_EXPORTABLE] === false) {
                     continue;
                 }
-                $data = $propertyAccessor->getValue($row, $column->getOption(Column::OPT_ACCESSOR_PATH));
+                $data = $column->getContent($row);
                 if ($column->getOption(Column::OPT_FORMATTER)) {
                     if (is_callable($column->getOption(Column::OPT_FORMATTER))) {
                         $formatter = $column->getOption(Column::OPT_FORMATTER);
