@@ -61,9 +61,10 @@ class AjaxOneToManyFilterType extends FilterType
     public function getValueField(?string $value = '0', ?string $operator = null): string
     {
         $targetClass = $this->getOption(static::OPT_TARGET_CLASS);
+        $jsonSearchUrl = $this->getOption(static::OPT_JSON_SEARCH_URL);
         $field = sprintf(
-            '<select name="{name}" class="form-control" data-ajax-select data-ajax-entity="%s">',
-            $targetClass
+            '<select name="{name}" class="form-control" data-araise--core-bundle--combobox-url-value="%s" data-controller="araise--core-bundle--combobox" data-araise--core-bundle--combobox-required-value="0">',
+            $jsonSearchUrl
         );
 
         $currentSelection = (int) $value > 0 ? $this->entityManager->getRepository($targetClass)->find((int) $value) : null;
@@ -87,8 +88,8 @@ class AjaxOneToManyFilterType extends FilterType
 
         $column = $this->getOption(static::OPT_COLUMN);
         return match ($operator) {
-            static::CRITERIA_EQUAL => $queryBuilder->expr()->in($column, ':'.$targetParameter),
-            static::CRITERIA_NOT_EQUAL => $queryBuilder->expr()->notIn($column, ':'.$targetParameter),
+            static::CRITERIA_EQUAL => $queryBuilder->expr()->isMemberOf(':'.$targetParameter, $column),
+            static::CRITERIA_NOT_EQUAL => $queryBuilder->expr()->not($queryBuilder->expr()->isMemberOf(':'.$targetParameter, $column)),
             default => null,
         };
     }

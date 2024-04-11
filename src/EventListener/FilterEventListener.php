@@ -99,7 +99,7 @@ class FilterEventListener
                     $this->queryBuilder()
                 );
 
-                if ($w instanceof Base || $w instanceof Comparison) {
+                if ($w instanceof Base || $w instanceof Comparison || $w instanceof Expr\Func) {
                     $andX->add($w);
                 } elseif (is_string($w) && (str_contains($w, 'IS NULL') || str_contains($w, 'IS NOT NULL'))) {
                     $andX->add($w);
