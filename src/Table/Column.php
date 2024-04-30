@@ -38,6 +38,13 @@ class Column extends AbstractColumn implements FormattableColumnInterface
 
     public const OPT_EXPORT_EXPORTABLE = 'exportable';
 
+    /**
+     * Defines the voter attribute of the column. If this attribute is not granted to the current user it will not be rendered.
+     * Defaults to <code>null</code>.
+     * Accepts: <code>string|object|null</code>.
+     */
+    public const OPT_VOTER_ATTRIBUTE = 'voter_attribute';
+
     protected FormatterManager $formatterManager;
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -54,6 +61,7 @@ class Column extends AbstractColumn implements FormattableColumnInterface
             self::OPT_SORTABLE => true,
             self::OPT_SORT_EXPRESSION => $this->identifier,
             self::OPT_PRIORITY => 100,
+            self::OPT_VOTER_ATTRIBUTE => null,
         ]);
 
         $resolver->setAllowedTypes(self::OPT_PRIORITY, 'int');
@@ -61,6 +69,7 @@ class Column extends AbstractColumn implements FormattableColumnInterface
         $resolver->setAllowedTypes(self::OPT_SORT_EXPRESSION, 'string');
         $resolver->setAllowedTypes(self::OPT_LINK_THE_COLUMN_CONTENT, 'boolean');
         $resolver->setAllowedTypes(self::OPT_SORTABLE, 'boolean');
+        $resolver->setAllowedTypes(self::OPT_VOTER_ATTRIBUTE, ['string', 'null', 'object']);
 
         $resolver->setDefault(self::OPT_EXPORT, function (OptionsResolver $exportResolver) {
             $exportResolver->setDefaults([
@@ -90,6 +99,11 @@ class Column extends AbstractColumn implements FormattableColumnInterface
         } catch (NoSuchPropertyException $e) {
             return $e->getMessage();
         }
+    }
+
+    public function getVoterAttribute(): ?string
+    {
+        return $this->getOption(self::OPT_VOTER_ATTRIBUTE);
     }
 
     /**

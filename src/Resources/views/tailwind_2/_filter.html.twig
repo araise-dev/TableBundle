@@ -6,6 +6,7 @@
         <div class="w-3/12">
             <select {{ stimulus_action('araise/table-bundle/filter', 'filterTargetChanged') }} name="{{ araise_table_parameter(table, 'filter_column')~indexSuffix }}" class="w-full cursor-pointer whatwedo-utility-paragraph whatwedo-crud-button--action-white">
                 {% for f in filters %}
+                    {% if not f.type.getOption('voter_attribute') or is_granted(f.type.getOption('voter_attribute'), table.getOption('definition')) %}
                     <option
                         value="{{ f.acronym }}"
                         data-operators="{{ f.type.operators|araise_table_filter_operators }}"
@@ -14,6 +15,7 @@
                         class="form-control"
                         {% if f.acronym == filter.acronym %}selected="selected"{% endif %}
                     >{{ f.name|trans }}</option>
+                    {% endif %}
                 {% endfor %}
             </select>
         </div>

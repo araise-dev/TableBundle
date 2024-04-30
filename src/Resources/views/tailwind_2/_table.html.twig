@@ -173,6 +173,7 @@
                             data-entity-id="{{ row.id }}">
                     </td>
                 {% endif %}
+
                 {% for column in table.columns %}
                     {% set attr = column.option('attributes')|default([])|filter((k,i) => k != 'class') %}
                     <td
@@ -182,6 +183,7 @@
                         {% endif %}
                         {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}
                     >
+                        {% if not column.getOption('voter_attribute') or is_granted(column.getOption('voter_attribute'), row) %}
                         {% apply spaceless %}
                             {% if loop.first and subTables %}
                                 <svg
@@ -203,6 +205,7 @@
                         {% endapply %}
                         {{ araise_table_column_render(column, row) }}
                         {% if column.option('link_the_column_content') and columnLink|default(false) %}</a>{% endif %}
+                        {% endif %}
                     </td>
                 {% endfor %}
                 {% if table.actions|length %}

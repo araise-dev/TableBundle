@@ -23,6 +23,13 @@ abstract class FilterType implements FilterTypeInterface
      */
     public const OPT_JOINS = 'joins';
 
+    /**
+     * Defines the voter attribute of the filter. If this attribute is not granted to the current user it will not be rendered.
+     * Defaults to <code>null</code>.
+     * Accepts: <code>string|object|null</code>.
+     */
+    public const OPT_VOTER_ATTRIBUTE = 'voter_attribute';
+
     protected array $options = [];
 
     public function __construct(?string $column = null, array $joins = [])
@@ -112,8 +119,10 @@ abstract class FilterType implements FilterTypeInterface
         $resolver->setDefaults([
             self::OPT_COLUMN => null,
             self::OPT_JOINS => [],
+            self::OPT_VOTER_ATTRIBUTE => null,
         ]);
         $resolver->setAllowedTypes(self::OPT_COLUMN, ['string']);
         $resolver->setAllowedTypes(self::OPT_JOINS, ['array']);
+        $resolver->setAllowedTypes(self::OPT_VOTER_ATTRIBUTE, ['string', 'null', 'object']);
     }
 }
