@@ -62,8 +62,9 @@
                         <span class="relative items-center" {{ stimulus_controller('araise/core-bundle/dropdown') }}>
                             <button
                                 class="items-center justify-center hover:text-neutral-700"
-                                {{ stimulus_action('araise/core-bundle/dropdown', 'toggle') |
+                                {{ stimulus_action('araise/core-bundle/dropdown', 'close', 'araise-dropdown:open@window') |
                                 stimulus_action('araise/core-bundle/dropdown', 'close', 'scroll@window') |
+                                stimulus_action('araise/core-bundle/dropdown', 'toggle') |
                                 stimulus_action('araise/core-bundle/dropdown', 'layoutCalculate') |
                                 stimulus_action('araise/core-bundle/dropdown', 'layoutCalculate', 'resize@window') }}
                                 type="button"
