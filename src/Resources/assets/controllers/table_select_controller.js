@@ -87,13 +87,15 @@ export default class extends Controller {
     updateSelectedCount() {
         const count = this.getIds().length;
 
-        if (count === 0) {
-            this.selectedCountTarget.classList.add('hidden');
-            return;
-        }
+        if(this.hasSelectedCountTarget) {
+            if (count === 0) {
+                this.selectedCountTarget.classList.add('hidden');
+                return;
+            }
 
-        this.selectedCountTarget.classList.remove('hidden');
-        this.selectedCountTarget.innerHTML = this.footSelectedTemplateValue.replace('{count}', count);
+            this.selectedCountTarget.classList.remove('hidden');
+            this.selectedCountTarget.innerHTML = this.footSelectedTemplateValue.replace('{count}', count);
+        }
     }
 
     syncSelectedIds() {
