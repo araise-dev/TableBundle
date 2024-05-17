@@ -41,6 +41,10 @@
         @apply border-none;
     }
 
+    .whatwedo_table-wrapper {
+        @apply border-l border-solid border-b-0 border-neutral-200;
+    }
+
     .whatwedo_table-head {
         @apply border-b border-neutral-200;
 

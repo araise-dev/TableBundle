@@ -1,70 +1,67 @@
 import { Controller } from '@hotwired/stimulus';
-import * as StickyThead from 'stickythead'
 
 export default class extends Controller {
-    static targets = ['content', 'arrow']
+    static targets = ['header', 'content', 'arrow']
+    static classes = ['arrowRotate', 'contentHidden']
 
-    toggle(event) {
+    /**
+     * @param {Event} event
+     */
+    toggle(event)
+    {
+        /** @type {HTMLElement[]} */
+        const contentTargets = this.contentTargets;
+
+        /** @type {HTMLElement[]} */
+        const headerTargets = this.headerTargets;
+
+        /** @type {HTMLElement[]} */
+        const arrowTargets = this.arrowTargets;
+
+        /** @type {string[]} */
+        const arrowRotateClasses = this.arrowRotateClasses;
+
+        /** @type {string[]} */
+        const contentHiddenClasses = this.contentHiddenClasses;
+
         const current = event.currentTarget;
-        const arrow = current.querySelector('[data-araise--table-bundle--accordion-target=arrow]');
-        const isOpen = current.dataset.ariaExpanded == 'true';
-        const nextSiblings = this.nextUntil(current, '[data-action="click->araise--table-bundle--accordion#toggle"]');
+        const header = this.closestTarget(current, 'header');
+        const arrow = this.closestTarget(current, 'arrow');
+        const content = header.nextElementSibling;
 
-        if(isOpen) {
-            arrow.classList.remove('rotate-90');
-            current.dataset.ariaExpanded = 'false';
+        const isOpen = header.getAttribute('aria-expanded') === 'true';
 
-            nextSiblings.forEach((sibling) => {
-                sibling.classList.add('hidden');
-            });
-        } else {
-            arrow.classList.add('rotate-90');
-            current.dataset.ariaExpanded = 'true';
+        // Reset all accordions
+        headerTargets.forEach((header) => {
+            header.setAttribute('aria-expanded', 'false');
+        });
+        arrowTargets.forEach((arrow) => {
+            arrow.classList.remove(...arrowRotateClasses);
+        });
+        contentTargets.forEach((content) => {
+            content.classList.add(...contentHiddenClasses);
+        });
 
-            nextSiblings.forEach((sibling) => {
-                sibling.classList.remove('hidden');
-            });
+        // Open the current accordion if it wasn't open before (else we toggle it)
+        if (!isOpen) {
+            arrow.classList.add(...arrowRotateClasses);
+            header.setAttribute('aria-expanded', 'true');
+            content.classList.remove(...contentHiddenClasses);
         }
     }
 
-    /*!
-     * Get all following siblings of each element up to but not including the element matched by the selector
-     * (c) 2017 Chris Ferdinandi, MIT License, https://gomakethings.com
-     * @param  {Node}   elem     The element
-     * @param  {String} selector The selector to stop at
-     * @param  {String} filter   The selector to match siblings against [optional]
-     * @return {Array}           The siblings
+    /**
+     * @param {HTMLElement} element
+     * @param {string} target
      */
-    nextUntil(elem, selector, filter) {
-
-        // Setup siblings array
-        var siblings = [];
-
-        // Get the next sibling element
-        elem = elem.nextElementSibling;
-
-        // As long as a sibling exists
-        while (elem) {
-
-            // If we've reached our match, bail
-            if (elem.matches(selector)) break;
-
-            // If filtering by a selector, check if the sibling matches
-            if (filter && !elem.matches(filter)) {
-                elem = elem.nextElementSibling;
-                continue;
-            }
-
-            // Otherwise, push it to the siblings array
-            siblings.push(elem);
-
-            // Get the next sibling element
-            elem = elem.nextElementSibling;
-
+    closestTarget(element, target)
+    {
+        const childElement = element.closest(`[data-araise--table-bundle--accordion-target='${target}']`);
+        if(childElement) {
+            return childElement;
         }
 
-        return siblings;
-
-    };
+        return element.parentElement;
+    }
 }
 
