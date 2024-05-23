@@ -4,12 +4,17 @@
             {% include "@araiseTable/tailwind_2/_filter.html.twig" %}
         {% endblock %}
 
-        <div {{ stimulus_controller(
-            '@araise/table-bundle/table_select', {
-                'footSelectedTemplate': '<br>' ~ ('araise_table.foot.selected'|trans({
-                    '{count}': '{count}',
-                }))
-            }) }}
+        <div
+            {{ stimulus_controller('araise/table-bundle/table_select',
+                {
+                    'footSelectedTemplate': '<br>' ~ ('araise_table.foot.selected'|trans({
+                        '{count}': '{count}',
+                    }))
+                },
+                {
+                    'hideCount': 'hidden'
+                }
+            ) }}
         >
             <turbo-frame id="whatwedo_table_{{ table.identifier }}" data-turbo="{{ araise_table_turbo_enabled ? 'true' : 'false' }}" target="_top" {{ stimulus_action('@araise/table-bundle/table_select', 'tableTargetChanged', 'turbo:frame-load') }}>
                 {% block table_header %}
