@@ -108,6 +108,16 @@
 
                     </th>
                 {% endif %}
+
+                {% set subTableHeaderRendered = false %}
+                {% for row in table.rows %}
+                    {% set subTables = table.getSubTables(row) %}
+                    {% if subTables and not subTableHeaderRendered %}
+                        <th class="w-12 px-3 py-3"></th>
+                        {% set subTableHeaderRendered = true %}
+                    {% endif %}
+                {% endfor %}
+
                 {% for column in table.columns %}
                     <th class="px-3 py-3 align-top whitespace-nowrap">
                         {{ column.option('label_html')|raw }} {{ column.option('label')|trans }}
@@ -142,7 +152,7 @@
                     </th>
                 {% endfor %}
                 {% if table.actions|length %}
-                    <th></th>
+                    <th class="w-20"><span class="sr-only">Actions</span></th>
                 {% endif %}
 
             </tr>
@@ -150,7 +160,10 @@
         {% endif %}
         <tbody
             class="whatwedo_table-body bg-white whatwedo-utility-paragraph text-neutral-900 divide-y divide-neutral-300"
-            {{ stimulus_controller('araise/table-bundle/accordion') }}
+            {{ stimulus_controller('araise/table-bundle/accordion', {}, {
+                'arrowRotate': 'rotate-90',
+                'contentHidden': 'hidden',
+            }) }}
         >
         {% if table.rows is empty %}
             <tr class="whatwedo_table-row hover:bg-neutral-100 transition duration-500 color">
@@ -161,9 +174,9 @@
         {% endif %}
         {% for row in table.rows %}
             {% set subTables = table.getSubTables(row) %}
-            {% set subTableStimulusAction = subTables ? stimulus_action('araise/table-bundle/accordion', 'toggle', 'click') : '' %}
-            <tr class="whatwedo_table-row hover:bg-neutral-100 transition duration-500 color align-top"
-                {{ subTableStimulusAction|raw }}
+            <tr
+                class="whatwedo_table-row hover:bg-neutral-100 transition duration-500 color align-top"
+                {{ stimulus_target('araise/table-bundle/accordion', 'header') }}
                 aria-expanded="false"
             >
                 {% if table.hasBatchActions() and table.getOption('content_visibility')['content_show_header'] %}
@@ -174,29 +187,35 @@
                             data-entity-id="{{ row.id }}">
                     </td>
                 {% endif %}
+                {% if subTables %}
+                    <td>
+                        <span
+                            class="block px-6 py-2 cursor-pointer"
+                            {{ stimulus_action('araise/table-bundle/accordion', 'toggle', 'click') }}
+                            {{ stimulus_target('araise/table-bundle/accordion', 'arrow') }}
+                        >
+                            <svg
+                                class="inline-block align-baseline h-2.5 w-2.5 text-neutral-600 mr-2"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 8.836 14.036"
+                            >
+                                <path id="arrow-right" d="M27.65,1.333a.718.718,0,0,1,0-1.1.97.97,0,0,1,1.251,0l7.067,6.238a.717.717,0,0,1,0,1.1L28.9,13.808a.97.97,0,0,1-1.251,0,.718.718,0,0,1,0-1.1l6.487-5.685Z" transform="translate(-27.391)" fill="currentColor" fill-rule="evenodd"/>
+                            </svg>
+                        </span>
+                    </td>
+                {% endif %}
                 {% for column in table.columns %}
                     {% set attr = column.option('attributes')|default([])|filter((k,i) => k != 'class') %}
                     <td
-                        class="px-3 py-2{% if subTables %} font-semibold cursor-pointer{% endif %}{% if column.option('link_the_column_content') %} whitespace-nowrap{% endif %} {{ column.option('attributes')['class'] ?? '' }}"
+                        class="px-3 py-2{% if column.option('link_the_column_content') %} whitespace-nowrap{% endif %} {{ column.option('attributes')['class'] ?? '' }}"
                         {% if row|araise_entity_is_tree and row.level != 0 %}
                             style="padding-left: {{ row.level*50 }}px"
                         {% endif %}
                         {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}
                     >
                         {% apply spaceless %}
-                            {% if loop.first and subTables %}
-                                <svg
-                                    {{ stimulus_target('araise/table-bundle/accordion', 'arrow') }}
-                                    class="inline-block align-baseline cursor-pointer h-2.5 w-2.5 text-neutral-600 mr-2"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 8.836 14.036"
-                                >
-                                    <path id="arrow-right" d="M27.65,1.333a.718.718,0,0,1,0-1.1.97.97,0,0,1,1.251,0l7.067,6.238a.717.717,0,0,1,0,1.1L28.9,13.808a.97.97,0,0,1-1.251,0,.718.718,0,0,1,0-1.1l6.487-5.685Z" transform="translate(-27.391)" fill="#4b5563" fill-rule="evenodd"/>
-                                </svg>
-                            {% endif %}
-
                             {% if column.option('link_the_column_content') and table.option('primary_link') is not null %}
-                                {% set columnLink = table.primaryLink(row) and not subTables %}
+                                {% set columnLink = table.primaryLink(row) %}
                                 {% if columnLink %}
                                     <a class="whatwedo-utility-link" href="{{ table.primaryLink(row) }}">
                                 {% endif %}
@@ -275,6 +294,7 @@
                     class="whatwedo_table-subtable hidden"
                     {{ stimulus_target('araise/table-bundle/accordion', 'content') }}
                 >
+                    <td class="w-12 px-3 py-3" aria-hidden="true"></td>
                     <td colspan="{{ table.getColspan(tableActionsVisible|length > 0 ? 1 : 0) }}">
                         {% with {'table':subTable} only %}{{ araise_table_only_render(table) }}{% endwith %}
                     </td>
