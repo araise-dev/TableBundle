@@ -51,12 +51,10 @@
                             <p class="whatwedo-utility-bold whitespace-nowrap mb-3 mt-3">{{ 'araise_table.download.info' | trans }}</p>
                             <div>
                                 {% for label,queryParameters in {'araise_table.page' : app.request.query.all, 'araise_table.all' : {'all':1}|merge(app.request.query.all)} %}
-                                    {% if view.definition != table.option('definition') %}
-                                        {% set queryParameters = queryParameters|merge({
-                                            'entityId': app.request.attributes.get('id'),
-                                            'acronym': table.identifier,
-                                        }) %}
-                                    {% endif %}
+                                    {% set queryParameters = queryParameters|merge({
+                                        'entityId': app.request.attributes.get('id'),
+                                        'acronym': table.identifier,
+                                    }) %}
                                     <a
                                         href="{{ path(table.option('definition').getRoute(constant('araise\\CrudBundle\\Enums\\Page::EXPORT')), queryParameters) }}"
                                         class="whatwedo_table:header__button whatwedo_table:header__button--download whatwedo_table-button"
