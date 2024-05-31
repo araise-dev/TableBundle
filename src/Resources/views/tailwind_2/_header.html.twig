@@ -1,5 +1,5 @@
 {# Table Header #}
-{% if table.option('title') or view is defined and table.option('definition').hasCapability(constant('araise\\CrudBundle\\Enums\\Page::EXPORT')) or table.filterExtension and table.filterExtension.filters|length > 0 or table.searchExtension and table.option('searchable') %}
+{% if table.option('title') or (view is defined and table.option('definition').hasCapability(constant('araise\\CrudBundle\\Enums\\Page::EXPORT'))) or (table.filterExtension and table.filterExtension.filters|length > 0) or (table.searchExtension and table.option('searchable')) %}
     <header class="whatwedo_table:header sm:flex sm:justify-between mb-4">
         <div class="whatwedo_table:header__title flex-1 min-w-0 whatwedo-utility-heading-1 sm:truncate">
             {% if table.option('title') %}
@@ -58,7 +58,7 @@
                                         }) %}
                                     {% endif %}
                                     <a
-                                        href="{{ path(view.definition.getRoute(constant('araise\\CrudBundle\\Enums\\Page::EXPORT')), queryParameters) }}"
+                                        href="{{ path(table.option('definition').getRoute(constant('araise\\CrudBundle\\Enums\\Page::EXPORT')), queryParameters) }}"
                                         class="whatwedo_table:header__button whatwedo_table:header__button--download whatwedo_table-button"
                                         {% if table.exporters|length > 1 %} {{ stimulus_target('araise/table-bundle/exporter', 'link') }} {% endif %}
                                     >
