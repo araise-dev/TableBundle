@@ -11,6 +11,7 @@
         <server name="SHELL_VERBOSITY" value="-1"/>
         <server name="SYMFONY_DEPRECATIONS_HELPER" value="max[self]=0&amp;max[direct]=0"/>
         <env name="DATABASE_URL" value="mysql://root:root@127.0.01:3306/table_bundle" />
+        <env name="DATABASE_DRIVER" value="pdo_mysql" />
 
     </php>
     <testsuites>

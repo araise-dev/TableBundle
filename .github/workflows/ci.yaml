@@ -19,6 +19,7 @@ jobs:
             - name: Execute tests (Unit and Feature tests) via PHPUnit
               env:
                   DATABASE_URL: sqlite:///%kernel.project_dir%/var/app.db
+                  DATABASE_DRIVER: pdo_sqlite
               run: vendor/bin/simple-phpunit
             - name: Check Code Styles
               run: vendor/bin/ecs
