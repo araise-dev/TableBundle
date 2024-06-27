@@ -302,5 +302,26 @@
             {% endfor %}
         {% endfor %}
         </tbody>
+        {% block footer_columns %}
+            {% if table.footerColumns is not null %}
+                <tfoot class="whatwedo_table-foot whatwedo-utility-paragraph">
+                <tr class="whatwedo_table-row border-t border-neutral-300 bg-neutral-200 text-base font-medium text-neutral-600 text-left tracking-wide align-top">
+                    {% for footerColumn in table.footerColumns %}
+                        {% set attr = footerColumn.option('attributes')|default([])|filter((k,i) => k != 'class') %}
+                        <td
+                            class="px-3 py-2 {{ footerColumn.option('attributes')['class'] ?? '' }}"
+                            {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}
+                        >
+                            {{ araise_table_column_render(footerColumn, table.footerData) }}
+                        </td>
+                    {% endfor %}
+
+                    {% if table.actions|length %}
+                        <td class="px-3 py-2"></td>
+                    {% endif %}
+                </tr>
+                </tfoot>
+            {% endif %}
+        {% endblock %}
     </table>
 </div>
