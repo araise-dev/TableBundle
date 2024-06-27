@@ -177,7 +177,7 @@
             <tr
                 class="whatwedo_table-row hover:bg-neutral-100 transition duration-500 color align-top"
                 {{ stimulus_target('araise/table-bundle/accordion', 'header') }}
-                aria-expanded="false"
+                aria-expanded="{{ table.getSubTableCollapsed(row) ? 'false' : 'true' }}"
             >
                 {% if table.hasBatchActions() and table.getOption('content_visibility')['content_show_header'] %}
                     <td class="px-6 py-2">

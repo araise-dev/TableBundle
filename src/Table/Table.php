@@ -57,6 +57,8 @@ class Table
 
     public const OPT_SUB_TABLE_LOADER = 'sub_table_loader';
 
+    public const OPT_SUB_TABLE_COLLAPSED = 'sub_table_collapsed';
+
     protected array $columns = [];
 
     protected array $actions = [];
@@ -112,6 +114,7 @@ class Table
             self::OPT_DEFINITION => null,
             self::OPT_DATALOADER_OPTIONS => [],
             self::OPT_SUB_TABLE_LOADER => null,
+            self::OPT_SUB_TABLE_COLLAPSED => true,
         ]);
 
         $resolver->setAllowedTypes(self::OPT_TITLE, ['null', 'string']);
@@ -129,6 +132,7 @@ class Table
         $resolver->setAllowedTypes(self::OPT_SUB_TABLE_LOADER, ['null', 'callable']);
         $resolver->setRequired(self::OPT_DATA_LOADER);
         $resolver->setAllowedTypes(self::OPT_DATA_LOADER, allowedTypes: DataLoaderInterface::class);
+        $resolver->setAllowedTypes(self::OPT_SUB_TABLE_COLLAPSED, ['boolean', 'callable']);
     }
 
     public function getSubTables(object|array $row): array
@@ -166,6 +170,14 @@ class Table
     public function getPrimaryLink(object|array $row)
     {
         return is_callable($this->options[self::OPT_PRIMARY_LINK]) ? $this->options[self::OPT_PRIMARY_LINK]($row) : null;
+    }
+
+    public function getSubTableCollapsed(object|array $row): bool
+    {
+        if (is_callable($this->options[self::OPT_SUB_TABLE_COLLAPSED])) {
+            return $this->options[self::OPT_SUB_TABLE_COLLAPSED]($row);
+        }
+        return $this->options[self::OPT_SUB_TABLE_COLLAPSED];
     }
 
     public function setOption(string $key, $value): static
