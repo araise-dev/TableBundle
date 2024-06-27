@@ -74,6 +74,33 @@ All Options are as constants in `Column` class.
 - `formatter`: [Formatter](formatter.md)
 - `sort_expression`: String, example: `'trainerGroup.name'`
 
+## Footer Columns
+In this example we would like to add a count of the content at the end of our table.
+We can to this by adding a footer column like so:
+
+```php
+$data= [
+    [
+        'id' => 1,
+    ],
+    [
+        'id' => 2,
+    ]
+];
+
+$table
+    ->setFooterData(['count' => count($data)])
+    ->addFooterColumn('totalLabel', null, [
+        Column::OPT_CALLABLE => fn (array $content) => 'Total',
+    ])
+    ->addFooterColumn('count', null, [
+        Column::OPT_CALLABLE => fn(array $content) => $content['count'],
+    ])
+;
+```
+
+Note that this is only a simple example. The data could easily be replaced with an array of entities for example.
+
 ## Action Columns
 
 Action Columns are here to link to other pages (f.ex. link to edit or view).
