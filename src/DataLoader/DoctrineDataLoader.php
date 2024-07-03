@@ -6,6 +6,7 @@ namespace araise\TableBundle\DataLoader;
 
 use araise\TableBundle\Extension\PaginationExtension;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Parameter;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -43,9 +44,24 @@ class DoctrineDataLoader extends AbstractDataLoader
         /** @var QueryBuilder $qb */
         $qb = (clone $this->options[self::OPT_QUERY_BUILDER]);
         $qb->select('COUNT('.$qb->getRootAliases()[0].')');
-        $qb->resetDQLPart('groupBy');
-        $qb->resetDQLPart('orderBy');
-        $this->paginationExtension->setTotalResults((int) $qb->getQuery()->getSingleScalarResult());
+
+        if (count($qb->getDQLPart('groupBy')) > 0) {
+            $sql = $qb->getQuery()->getSQL();
+            $params = array_values(
+                array_map(
+                    static fn (Parameter $parameter) => $parameter->getValue(),
+                    $qb->getParameters()->toArray()
+                )
+            );
+
+            $sql = sprintf('SELECT COUNT(*) as row_count FROM (%s) AS sub;', $sql);
+            $rsm = new ResultSetMapping();
+            $rsm->addScalarResult('row_count', 'row_count', 'integer');
+            $count = $this->entityManager->createNativeQuery($sql, $rsm)->setParameters($params)->getSingleScalarResult();
+            $this->paginationExtension->setTotalResults((int) $count);
+        } else {
+            $this->paginationExtension->setTotalResults($qb->getQuery()->getSingleScalarResult());
+        }
 
         if ($this->getOption(self::OPT_SAVE_LAST_QUERY) && $this->requestStack->getCurrentRequest()?->hasSession()) {
             /** @var QueryBuilder $qbSave */
