@@ -8,9 +8,6 @@ export default class extends Controller {
         super.initialize();
 
         /** @type {HTMLElement[]} */
-        const contentTargets = this.contentTargets;
-
-        /** @type {HTMLElement[]} */
         const headerTargets = this.headerTargets;
 
         /** @type {string[]} */
@@ -21,7 +18,8 @@ export default class extends Controller {
 
         headerTargets.forEach((header) => {
             const isOpen = header.getAttribute('aria-expanded') === 'true';
-            const content = header.nextElementSibling;
+            // Subtables can be defined in the definition. It the content block outputs them, we can handle them
+            const contents = this.getNextSiblingsWithClass(header, 'whatwedo_table-subtable');
             const arrow = this.closestChildTarget(header, 'arrow');
 
             if(!arrow) {
@@ -30,10 +28,14 @@ export default class extends Controller {
 
             if (isOpen) {
                 arrow.classList.add(...arrowRotateClasses);
-                content.classList.remove(...contentHiddenClasses);
+                contents.forEach((subtable) => {
+                    subtable.classList.remove(...contentHiddenClasses);
+                });
             } else {
                 arrow.classList.remove(...arrowRotateClasses);
-                content.classList.add(...contentHiddenClasses);
+                contents.forEach((subtable) => {
+                    subtable.classList.add(...contentHiddenClasses);
+                });
             }
         });
     }
@@ -43,15 +45,6 @@ export default class extends Controller {
      */
     toggle(event)
     {
-        /** @type {HTMLElement[]} */
-        const contentTargets = this.contentTargets;
-
-        /** @type {HTMLElement[]} */
-        const headerTargets = this.headerTargets;
-
-        /** @type {HTMLElement[]} */
-        const arrowTargets = this.arrowTargets;
-
         /** @type {string[]} */
         const arrowRotateClasses = this.arrowRotateClasses;
 
@@ -61,7 +54,8 @@ export default class extends Controller {
         const current = event.currentTarget;
         const header = this.closestTarget(current, 'header');
         const arrow = this.closestTarget(current, 'arrow');
-        const content = header.nextElementSibling;
+        // Subtables can be defined in the definition. It the content block outputs them, we can toggle them
+        const contents = this.getNextSiblingsWithClass(header, 'whatwedo_table-subtable');
 
         const isOpen = header.getAttribute('aria-expanded') === 'true';
 
@@ -69,11 +63,15 @@ export default class extends Controller {
         if (!isOpen) {
             arrow.classList.add(...arrowRotateClasses);
             header.setAttribute('aria-expanded', 'true');
-            content.classList.remove(...contentHiddenClasses);
+            contents.forEach((subtable) => {
+                subtable.classList.remove(...contentHiddenClasses);
+            });
         } else {
             arrow.classList.remove(...arrowRotateClasses);
             header.setAttribute('aria-expanded', 'false');
-            content.classList.add(...contentHiddenClasses);
+            contents.forEach((subtable) => {
+                subtable.classList.add(...contentHiddenClasses);
+            });
         }
     }
 
@@ -103,6 +101,18 @@ export default class extends Controller {
         }
 
         return null;
+    }
+
+    getNextSiblingsWithClass(element, className) {
+        let siblings = [];
+        let next = element.nextElementSibling;
+
+        while (next && next.classList.contains(className)) {
+            siblings.push(next);
+            next = next.nextElementSibling;
+        }
+
+        return siblings;
     }
 }
 
