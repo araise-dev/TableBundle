@@ -28,27 +28,26 @@
                         data-transition-leave-to="opacity-0 scale-95"
                         tabindex="-1"
                     >
-                        <div class="space-y-2" {% if table.exporters|length > 1 %} {{ stimulus_controller('araise/table-bundle/exporter') }} {% endif %}>
+                        <div {% if table.exporters|length > 1 %} {{ stimulus_controller('araise/table-bundle/exporter') }} {% endif %}>
                             {% if table.exporters|length > 1 %}
-                                <p class="whatwedo-utility-heading-3 mb-3">{{ 'araise_table.download.choices' | trans }}</p>
-                                <div>
-                                    <ul role="list">
-                                        {% for acronym,exporter in table.exporters %}
-                                            <li>
-                                                <input
-                                                    type="checkbox"
-                                                    id="{{ acronym }}"
-                                                    name="exporter"
-                                                    value="{{ acronym }}"
-                                                    {% if table.exporters|length > 1 %} {{ stimulus_action('araise/table-bundle/exporter', 'select')}} {% endif %}
-                                                >
-                                                <label for="{{ acronym }}">{{ exporter.label | trans }}</label>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
+                                <p class="whatwedo-utility-heading-3 mb-2">{{ 'araise_table.download.choices' | trans }}</p>
+                                <ul class="mb-4" role="list">
+                                    {% for acronym,exporter in table.exporters %}
+                                        <li class="flex items-center mb-2 gap-x-2">
+                                            <input
+                                                class="whatwedo_core-checkbox"
+                                                type="checkbox"
+                                                id="{{ acronym }}"
+                                                name="exporter"
+                                                value="{{ acronym }}"
+                                                {% if table.exporters|length > 1 %} {{ stimulus_action('araise/table-bundle/exporter', 'select')}} {% endif %}
+                                            >
+                                            <label class="whatwedo-utility-paragraph" for="{{ acronym }}">{{ exporter.label | trans }}</label>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
                             {% endif %}
-                            <p class="whatwedo-utility-bold whitespace-nowrap mb-3 mt-3">{{ 'araise_table.download.info' | trans }}</p>
+                            <p class="whatwedo-utility-bold whitespace-nowrap mb-2">{{ 'araise_table.download.info' | trans }}</p>
                             <div>
                                 {% for label,queryParameters in {'araise_table.page' : app.request.query.all, 'araise_table.all' : {'all':1}|merge(app.request.query.all)} %}
                                     {% if block is defined and content is defined %}
