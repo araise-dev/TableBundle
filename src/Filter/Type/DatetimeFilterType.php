@@ -40,8 +40,9 @@ class DatetimeFilterType extends FilterType
         $value = $date->format(static::getDateFormat());
 
         return sprintf(
-            '<input type="datetime-local" name="{name}" value="%s">',
-            $operator !== static::CRITERIA_IS_EMPTY ? $value : ''
+            '<input type="datetime-local" name="{name}" value="%s" data-controller="araise--core-bundle--datetime" data-araise--core-bundle--datetime-lang-value="%s">',
+            $operator !== static::CRITERIA_IS_EMPTY ? $value : '',
+            'de'
         );
     }
 
