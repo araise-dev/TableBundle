@@ -5,9 +5,18 @@ declare(strict_types=1);
 namespace araise\TableBundle\Filter\Type;
 
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class DateFilterType extends DatetimeFilterType
 {
+    protected $locale;
+
+    public function __construct(?string $column = null, array $joins = [], protected ?RequestStack $requestStack = null)
+    {
+        parent::__construct($column, $joins);
+        $this->locale = $requestStack->getMainRequest()?->getLocale() ?? 'en';
+    }
+
     public function getValueField(?string $value = null, ?string $operator = null): string
     {
         $date = \DateTime::createFromFormat(static::getQueryDataFormat(), (string) $value) ?: new \DateTime();
@@ -16,7 +25,7 @@ class DateFilterType extends DatetimeFilterType
         return sprintf(
             '<input type="date" name="{name}" value="%s" data-controller="araise--core-bundle--datetime" data-araise--core-bundle--datetime-lang-value="%s">',
             $operator !== static::CRITERIA_IS_EMPTY ? $value : '',
-            'de'
+            $this->locale
         );
     }
 
