@@ -1,6 +1,6 @@
 {# Table Header #}
 {% if table.option('title') or (view is defined and table.option('definition').hasCapability(constant('araise\\CrudBundle\\Enums\\Page::EXPORT'))) or (table.filterExtension and table.filterExtension.filters|length > 0) or (table.searchExtension and table.option('searchable')) %}
-    <header class="whatwedo_table:header sm:flex sm:justify-between mb-4">
+    <header class="whatwedo_table:header sm:flex sm:justify-between my-3">
         <div class="whatwedo_table:header__title flex-1 min-w-0 whatwedo-utility-heading-1 sm:truncate">
             {% if table.option('title') %}
                 <h1>
@@ -8,14 +8,15 @@
                 </h1>
             {% endif %}
         </div>
-        <div class="mt-4 flex sm:mt-0 sm:ml-4 space-x-2">
+        <div class="mt-4 flex sm:mt-0 sm:ml-4 space-x-3 items-center {{ block is defined ? ' mr-3' : '' }}">
             {% if table.exporters|length > 0 and table.option('definition') and table.option('definition').hasCapability(constant('araise\\CrudBundle\\Enums\\Page::EXPORT')) %}
                 <div
                     {{ stimulus_controller('araise/core-bundle/dropdown') }}
                     class="relative inline-block">
                     <button
                         {{ stimulus_action('araise/core-bundle/dropdown', 'toggle') | stimulus_action('araise/core-bundle/dropdown', 'close', 'keydown.esc') }}
-                        class="whatwedo_table:header__button whatwedo_table:header__button--download whatwedo_table-button h-full" tabindex="-1"
+                        {{ stimulus_controller('araise/crud-bundle/tooltip', { 'title': 'araise_table.download.tooltip'|trans } ) }}
+                        class="whatwedo_table:header__button whatwedo_table:header__button--download whatwedo_table-button" tabindex="-1"
                     >
                         {{ bootstrap_icon('download', { class: 'w-4 h-4' }) }}
                     </button>
@@ -84,6 +85,7 @@
                     type="button"
                     {{ stimulus_action('araise/table-bundle/filter', 'open') }}
                     {{ stimulus_target('araise/table-bundle/filter', 'triggerButton') }}
+                    {{ stimulus_controller('araise/crud-bundle/tooltip', { 'title': 'araise_table.filter.tooltip'|trans } ) }}
                 >
                     {{ bootstrap_icon('funnel-fill', { class: 'w-4 h-4' }) }}
                 </button>
@@ -106,15 +108,14 @@
                                 value="{{ table.searchExtension.query }}"
                             >
                         </div>
-                        <button class="whatwedo_table-button--search" type="submit">
-                            {{ bootstrap_icon('search', { class: 'h-4 w-4 text-neutral-400', alt: 'Suchen' }) }}
+                        <button class="whatwedo_table-button--search" type="submit" title="Suche">
+                            {{ bootstrap_icon('search', { class: 'h-4 w-4 text-neutral-400' }) }}
                         </button>
                     </div>
                 </form>
             {% endif %}
         </div>
     </header>
-
 {% endif %}
 
 {% macro add_button(content, view, isOnShow) %}

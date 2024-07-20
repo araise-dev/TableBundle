@@ -1,5 +1,6 @@
 araise_table:
     download:
+        tooltop: Export
         info: What would you like to download?
         choices: Choose Export
     all: All pages
