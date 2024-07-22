@@ -56,7 +56,9 @@ export default class extends Controller {
         /** @type {string[]} */
         const contentHiddenClasses = this.contentHiddenClasses;
 
-        header && header.setAttribute('aria-expanded', 'true');
+        if(header) {
+            header.setAttribute('aria-expanded', 'true');
+        }
         arrow.classList.add(...arrowRotateClasses);
         contents.forEach((item) => {
             item.classList.remove(...contentHiddenClasses);
@@ -75,7 +77,9 @@ export default class extends Controller {
         /** @type {string[]} */
         const contentHiddenClasses = this.contentHiddenClasses;
 
-        header && header.setAttribute('aria-expanded', 'false');
+        if(header) {
+            header.setAttribute('aria-expanded', 'false');
+        }
         arrow.classList.remove(...arrowRotateClasses);
         contents.forEach((item) => {
             item.classList.add(...contentHiddenClasses);
