@@ -1,6 +1,5 @@
 araise_table:
     download:
-        tooltop: Export
         info: What would you like to download?
         choices: Choose Export
     all: All pages
@@ -24,6 +23,7 @@ araise_table:
     options: Options
     no_elements: No elements available
     search:
+        title: Search
         filter: Filter
         remove_search: Remove search
         placeholder: Search term...

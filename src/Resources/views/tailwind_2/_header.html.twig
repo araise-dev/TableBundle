@@ -16,7 +16,7 @@
                     <button
                         {{ stimulus_action('araise/core-bundle/dropdown', 'toggle') | stimulus_action('araise/core-bundle/dropdown', 'close', 'keydown.esc') }}
                         {{ stimulus_controller('araise/crud-bundle/tooltip', { 'title': 'araise_table.download.tooltip'|trans } ) }}
-                        class="whatwedo_table:header__button whatwedo_table:header__button--download whatwedo_table-button" tabindex="-1"
+                        class="whatwedo_table:header__button whatwedo_table:header__button--download whatwedo_table-button"
                     >
                         {{ bootstrap_icon('download', { class: 'w-4 h-4' }) }}
                     </button>
@@ -104,12 +104,13 @@
                             <input
                                 class="whatwedo_core-input--rounded-left"
                                 type="search"
-                                name="{{ araise_table_parameter(table, 'query') }}" placeholder="Suchbegriff ..."
+                                name="{{ araise_table_parameter(table, 'query') }}" placeholder="{{ 'araise_table.search.placeholder'|trans }}"
                                 value="{{ table.searchExtension.query }}"
                             >
                         </div>
-                        <button class="whatwedo_table-button--search" type="submit" title="Suche">
+                        <button class="whatwedo_table-button--search" type="submit" title="{{ 'araise_table.search.title'|trans }}">
                             {{ bootstrap_icon('search', { class: 'h-4 w-4 text-neutral-400' }) }}
+                            <span class="sr-only">{{ 'araise_table.search.title'|trans }}</span>
                         </button>
                     </div>
                 </form>
