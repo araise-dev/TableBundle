@@ -5,30 +5,19 @@ declare(strict_types=1);
 namespace araise\TableBundle\Tests\App\Factory;
 
 use araise\TableBundle\Tests\App\Entity\Company;
-use araise\TableBundle\Tests\App\Repository\CompanyRepository;
-use Zenstruck\Foundry\ModelFactory;
-use Zenstruck\Foundry\Proxy;
-use Zenstruck\Foundry\RepositoryProxy;
+use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
- * @method static        Company|Proxy createOne(array $attributes = [])
- * @method static        Company[]|Proxy[] createMany(int $number, $attributes = [])
- * @method static        Company|Proxy find($criteria)
- * @method static        Company|Proxy findOrCreate(array $attributes)
- * @method static        Company|Proxy first(string $sortedField = 'id')
- * @method static        Company|Proxy last(string $sortedField = 'id')
- * @method static        Company|Proxy random(array $attributes = [])
- * @method static        Company|Proxy randomOrCreate(array $attributes = [])
- * @method static        Company[]|Proxy[] all()
- * @method static        Company[]|Proxy[] findBy(array $attributes)
- * @method static        Company[]|Proxy[] randomSet(int $number, array $attributes = [])
- * @method static        Company[]|Proxy[] randomRange(int $min, int $max, array $attributes = [])
- * @method static        CompanyRepository|RepositoryProxy repository()
- * @method Company|Proxy create($attributes = [])
+ * @extends PersistentObjectFactory<Company>
  */
-final class CompanyFactory extends ModelFactory
+final class CompanyFactory extends PersistentObjectFactory
 {
-    protected function getDefaults(): array
+    public static function class(): string
+    {
+        return Company::class;
+    }
+
+    protected function defaults(): array
     {
         return [
             'name' => self::faker()->company(),
@@ -36,10 +25,5 @@ final class CompanyFactory extends ModelFactory
             'country' => self::faker()->country(),
             'taxIdentificationNumber' => self::faker()->numerify(self::faker()->countryCode().'###.####.###.#.###.##'),
         ];
-    }
-
-    protected static function getClass(): string
-    {
-        return Company::class;
     }
 }
