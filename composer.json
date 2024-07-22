@@ -32,7 +32,7 @@
         "doctrine/doctrine-bundle": "^2.5.5",
         "doctrine/orm": "^2.11",
         "whatwedo/php-coding-standard": "^1.0",
-        "zenstruck/foundry": "^1.16",
+        "zenstruck/foundry": "^v2.0.7",
         "zenstruck/console-test": "^v1.1.0",
         "symfony/translation": "^6.4|^7.0",
         "symfony/twig-bundle": "^6.4|^7.0",
