@@ -4,36 +4,22 @@ export default class extends Controller {
     static targets = ['header', 'content', 'arrow']
     static classes = ['arrowRotate', 'contentHidden']
 
-    initialize() {
-        super.initialize();
-
-        /** @type {HTMLElement[]} */
-        const contentTargets = this.contentTargets;
-
+    connect() {
         /** @type {HTMLElement[]} */
         const headerTargets = this.headerTargets;
 
-        /** @type {string[]} */
-        const arrowRotateClasses = this.arrowRotateClasses;
-
-        /** @type {string[]} */
-        const contentHiddenClasses = this.contentHiddenClasses;
-
         headerTargets.forEach((header) => {
-            const isOpen = header.getAttribute('aria-expanded') === 'true';
-            const content = header.nextElementSibling;
+            const isOpenDefault = header.getAttribute('aria-expanded') === 'true';
+            const contents = this.getAccordionContents(header);
             const arrow = this.closestChildTarget(header, 'arrow');
 
             if(!arrow) {
                 return;
             }
 
-            if (isOpen) {
-                arrow.classList.add(...arrowRotateClasses);
-                content.classList.remove(...contentHiddenClasses);
-            } else {
-                arrow.classList.remove(...arrowRotateClasses);
-                content.classList.add(...contentHiddenClasses);
+            // Open all accordions on load. This can be definied in araise (OPT_SUB_TABLE_COLLAPSED)
+            if (isOpenDefault) {
+                this.applyOpenState({arrow, contents});
             }
         });
     }
@@ -43,14 +29,26 @@ export default class extends Controller {
      */
     toggle(event)
     {
-        /** @type {HTMLElement[]} */
-        const contentTargets = this.contentTargets;
+        const current = event.currentTarget;
+        const header = this.closestTarget(current, 'header');
+        const arrow = this.closestTarget(current, 'arrow');
+        const contents = this.getAccordionContents(header);
 
-        /** @type {HTMLElement[]} */
-        const headerTargets = this.headerTargets;
+        const isOpen = header.getAttribute('aria-expanded') === 'true';
 
-        /** @type {HTMLElement[]} */
-        const arrowTargets = this.arrowTargets;
+        // Open the current accordion if it wasn't open before (else we toggle it)
+        if (!isOpen) {
+            this.applyOpenState({arrow, contents, header});
+        } else {
+            this.applyCloseState({arrow, contents, header});
+        }
+    }
+
+    /**
+     * @param {HTMLElement[]} elements
+     */
+    applyOpenState(elements) {
+        const {arrow, contents, header} = elements;
 
         /** @type {string[]} */
         const arrowRotateClasses = this.arrowRotateClasses;
@@ -58,23 +56,46 @@ export default class extends Controller {
         /** @type {string[]} */
         const contentHiddenClasses = this.contentHiddenClasses;
 
-        const current = event.currentTarget;
-        const header = this.closestTarget(current, 'header');
-        const arrow = this.closestTarget(current, 'arrow');
-        const content = header.nextElementSibling;
-
-        const isOpen = header.getAttribute('aria-expanded') === 'true';
-
-        // Open the current accordion if it wasn't open before (else we toggle it)
-        if (!isOpen) {
-            arrow.classList.add(...arrowRotateClasses);
+        if(header) {
             header.setAttribute('aria-expanded', 'true');
-            content.classList.remove(...contentHiddenClasses);
-        } else {
-            arrow.classList.remove(...arrowRotateClasses);
-            header.setAttribute('aria-expanded', 'false');
-            content.classList.add(...contentHiddenClasses);
         }
+        arrow.classList.add(...arrowRotateClasses);
+        contents.forEach((item) => {
+            item.classList.remove(...contentHiddenClasses);
+        });
+    }
+
+    /**
+     * @param {HTMLElement[]} elements
+     */
+    applyCloseState(elements) {
+        const {arrow, contents, header} = elements;
+
+        /** @type {string[]} */
+        const arrowRotateClasses = this.arrowRotateClasses;
+
+        /** @type {string[]} */
+        const contentHiddenClasses = this.contentHiddenClasses;
+
+        if(header) {
+            header.setAttribute('aria-expanded', 'false');
+        }
+        arrow.classList.remove(...arrowRotateClasses);
+        contents.forEach((item) => {
+            item.classList.add(...contentHiddenClasses);
+        });
+    }
+
+    /**
+     * @param {HTMLElement} header
+     * @return {HTMLElement[]}
+     *
+     * The content block can output subtables. Those can be defined in the definition of araise.
+     * Multiple subtables can be defined, so we want to toggle them in groups together.
+     * Those are children of the header and not wrapped inside a div, that's why we return an array of elements.
+     */
+    getAccordionContents(header) {
+        return this.getNextSiblingsWithClass(header, 'whatwedo_table-subtable');
     }
 
     /**
@@ -103,6 +124,22 @@ export default class extends Controller {
         }
 
         return null;
+    }
+
+    /**
+     * @param {HTMLElement} element
+     * @param {string} className
+     */
+    getNextSiblingsWithClass(element, className) {
+        let siblings = [];
+        let next = element.nextElementSibling;
+
+        while (next && next.classList.contains(className)) {
+            siblings.push(next);
+            next = next.nextElementSibling;
+        }
+
+        return siblings;
     }
 }
 
