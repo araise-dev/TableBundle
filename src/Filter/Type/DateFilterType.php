@@ -11,8 +11,11 @@ class DateFilterType extends DatetimeFilterType
 {
     protected $locale;
 
-    public function __construct(?string $column = null, array $joins = [], protected ?RequestStack $requestStack = null)
-    {
+    public function __construct(
+        ?string $column = null,
+        array $joins = [],
+        protected ?RequestStack $requestStack = null
+    ) {
         parent::__construct($column, $joins);
         $this->locale = $requestStack->getMainRequest()?->getLocale() ?? 'en';
     }

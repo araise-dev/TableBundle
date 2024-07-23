@@ -21,8 +21,11 @@ class DatetimeFilterType extends FilterType
 
     public const CRITERIA_IS_EMPTY = 'is_empty';
 
-    public function __construct(?string $column = null, array $joins = [], protected ?RequestStack $requestStack = null)
-    {
+    public function __construct(
+        ?string $column = null,
+        array $joins = [],
+        protected ?RequestStack $requestStack = null
+    ) {
         parent::__construct($column, $joins);
     }
 
