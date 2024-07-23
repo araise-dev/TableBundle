@@ -182,7 +182,7 @@
                 {% if table.hasBatchActions() and table.getOption('content_visibility')['content_show_header'] %}
                     <td class="px-6 py-2">
                         <input
-                            class="cursor-pointer"
+                            class="whatwedo_core-checkbox"
                             type="checkbox" {{ stimulus_target('@araise/table-bundle/table_select', 'selector') }} {{ stimulus_action('@araise/table-bundle/table_select', 'selectId') }}
                             data-entity-id="{{ row.id }}">
                     </td>
