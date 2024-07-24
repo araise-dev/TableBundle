@@ -6,6 +6,7 @@ namespace araise\TableBundle\Filter\Type;
 
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\UX\StimulusBundle\Helper\StimulusHelper;
 
 class DateFilterType extends DatetimeFilterType
 {
@@ -24,11 +25,16 @@ class DateFilterType extends DatetimeFilterType
     {
         $date = \DateTime::createFromFormat(static::getQueryDataFormat(), (string) $value) ?: new \DateTime();
         $value = $date->format(static::getDateFormat());
-
+        $stimulusAttrs = (new StimulusHelper(null))->createStimulusAttributes();
+        $stimulusAttrs
+            ->addController('araise/core-bundle/datetime', [
+                'lang' => $this->locale,
+            ])
+        ;
         return sprintf(
-            '<input type="date" name="{name}" value="%s" data-controller="araise--core-bundle--datetime" data-araise--core-bundle--datetime-lang-value="%s">',
+            '<input type="date" name="{name}" value="%s" %s>',
             $operator !== static::CRITERIA_IS_EMPTY ? $value : '',
-            $this->locale
+            $stimulusAttrs
         );
     }
 
