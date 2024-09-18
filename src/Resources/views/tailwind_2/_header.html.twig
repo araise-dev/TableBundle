@@ -8,7 +8,7 @@
                 </h1>
             {% endif %}
         </div>
-        <div class="mt-4 flex sm:mt-0 sm:ml-4 space-x-3 items-center {{ block is defined ? ' mr-3' : '' }}">
+        <div class="mt-4 flex sm:mt-0 sm:ml-4 space-x-3 items-center {{ block is defined ? 'ml-3 mr-3' : '' }}">
             {% if table.exporters|length > 0 and table.option('definition') and table.option('definition').hasCapability(constant('araise\\CrudBundle\\Enums\\Page::EXPORT')) %}
                 <div
                     {{ stimulus_controller('araise/core-bundle/dropdown') }}
