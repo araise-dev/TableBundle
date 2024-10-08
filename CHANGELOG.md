@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v1.2.0
+ - Removed symfony ^5.4 support
+ - Added Table option `OPT_SUB_TABLE_COLLAPSED`. This will collapse the sub table by default, you can also pass a callable to determine if the sub table should be collapsed or not 
+ - Added footer columns to the table. This can be used to display totals or other information
+ - Fixed a bug where the table count would be of when using group by in the default query builder
+ - Date filters now use the `datetime_controller.js` provided by the core-bundle
+ - UX improvements
+
 ## v1.0.7
  - More documentation and better styling of the documentation
  - Added a new optional parameter to the `FilterTypeInterface::getValueField()` method to allow for more complex value fields.
