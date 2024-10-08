@@ -1,5 +1,6 @@
 araise_table:
     download:
+        tooltip: Export
         info: Was möchten Sie herunterladen?
         choices: Export wählen
     all: Alle Seiten
@@ -41,6 +42,7 @@ araise_table:
         next_page: nächste Seite
         last_page: letzte Seite
     filter:
+        tooltip: Filter
         show_element_when: Zeige Elemente wenn
         or: oder
         and: und

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace araise\TableBundle\Filter\Type;
 
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\UX\StimulusBundle\Helper\StimulusHelper;
 
 class DatetimeFilterType extends FilterType
 {
@@ -19,6 +21,14 @@ class DatetimeFilterType extends FilterType
     public const CRITERIA_IN_YEAR = 'in_year';
 
     public const CRITERIA_IS_EMPTY = 'is_empty';
+
+    public function __construct(
+        ?string $column = null,
+        array $joins = [],
+        protected ?RequestStack $requestStack = null
+    ) {
+        parent::__construct($column, $joins);
+    }
 
     public function getOperators(): array
     {
@@ -38,10 +48,17 @@ class DatetimeFilterType extends FilterType
     {
         $date = \DateTime::createFromFormat(static::getQueryDataFormat(), (string) $value) ?: new \DateTime();
         $value = $date->format(static::getDateFormat());
-
+        $locale = $this->requestStack->getMainRequest()?->getLocale();
+        $stimulusAttrs = (new StimulusHelper(null))->createStimulusAttributes();
+        $stimulusAttrs
+            ->addController('araise/core-bundle/datetime', [
+                'lang' => $locale ?? 'en',
+            ])
+        ;
         return sprintf(
-            '<input type="datetime-local" name="{name}" value="%s">',
-            $operator !== static::CRITERIA_IS_EMPTY ? $value : ''
+            '<input type="datetime-local" name="{name}" value="%s" %s>',
+            $operator !== static::CRITERIA_IS_EMPTY ? $value : '',
+            $stimulusAttrs
         );
     }
 

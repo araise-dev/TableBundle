@@ -23,6 +23,7 @@ araise_table:
     options: Options
     no_elements: No elements available
     search:
+        title: Search
         filter: Filter
         remove_search: Remove search
         placeholder: Search term...

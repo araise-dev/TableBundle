@@ -21,13 +21,13 @@ class HierarchicalEntityTest extends KernelTestCase
         /** @var Category $category */
         $category = CategoryFactory::createOne([
             'name' => 'Level 1',
-        ])->object();
+        ]);
 
         /** @var Category $subcategory */
         $subcategory = CategoryFactory::createOne([
             'name' => 'Level 2',
             'parent' => $category,
-        ])->object();
+        ]);
 
         $this->assertSame($category, $subcategory->getParent());
         $this->assertSame(0, $category->getLevel());

@@ -1,7 +1,6 @@
 {# Table Header #}
-{% if table.option('title') or view is defined and view.definition.hasCapability(constant('araise\\CrudBundle\\Enums\\Page::EXPORT')) or table.filterExtension and table.filterExtension.filters|length > 0 or table.searchExtension and table.option('searchable') %}
-
-    <header class="whatwedo_table:header sm:flex sm:justify-between mb-4">
+{% if table.option('title') or (view is defined and table.option('definition').hasCapability(constant('araise\\CrudBundle\\Enums\\Page::EXPORT'))) or (table.filterExtension and table.filterExtension.filters|length > 0) or (table.searchExtension and table.option('searchable')) %}
+    <header class="whatwedo_table:header sm:flex sm:justify-between my-3">
         <div class="whatwedo_table:header__title flex-1 min-w-0 whatwedo-utility-heading-1 sm:truncate">
             {% if table.option('title') %}
                 <h1>
@@ -9,14 +8,15 @@
                 </h1>
             {% endif %}
         </div>
-        <div class="mt-4 flex sm:mt-0 sm:ml-4 space-x-2">
+        <div class="mt-4 flex sm:mt-0 sm:ml-4 space-x-3 items-center {{ block is defined ? 'ml-3 mr-3' : '' }}">
             {% if table.exporters|length > 0 and table.option('definition') and table.option('definition').hasCapability(constant('araise\\CrudBundle\\Enums\\Page::EXPORT')) %}
                 <div
                     {{ stimulus_controller('araise/core-bundle/dropdown') }}
                     class="relative inline-block">
                     <button
                         {{ stimulus_action('araise/core-bundle/dropdown', 'toggle') | stimulus_action('araise/core-bundle/dropdown', 'close', 'keydown.esc') }}
-                        class="whatwedo_table:header__button whatwedo_table:header__button--download whatwedo_table-button h-full" tabindex="-1"
+                        {{ stimulus_controller('araise/crud-bundle/tooltip', { 'title': 'araise_table.download.tooltip'|trans } ) }}
+                        class="whatwedo_table:header__button whatwedo_table:header__button--download whatwedo_table-button"
                     >
                         {{ bootstrap_icon('download', { class: 'w-4 h-4' }) }}
                     </button>
@@ -29,31 +29,40 @@
                         data-transition-leave-to="opacity-0 scale-95"
                         tabindex="-1"
                     >
-                        <div class="space-y-2" {% if table.exporters|length > 1 %} {{ stimulus_controller('araise/table-bundle/exporter') }} {% endif %}>
+                        {% set stimulusController = (table.exporters|length > 1) ? stimulus_controller('araise/table-bundle/exporter') : '' %}
+                        <div {{ stimulusController }}>
                             {% if table.exporters|length > 1 %}
-                                <p class="whatwedo-utility-heading-3 mb-3">{{ 'araise_table.download.choices' | trans }}</p>
-                                <div>
-                                    <ul role="list">
-                                        {% for acronym,exporter in table.exporters %}
-                                            <li>
-                                                <input
-                                                    type="checkbox"
-                                                    id="{{ acronym }}"
-                                                    name="exporter"
-                                                    value="{{ acronym }}"
-                                                    {% if table.exporters|length > 1 %} {{ stimulus_action('araise/table-bundle/exporter', 'select')}} {% endif %}
-                                                >
-                                                <label for="{{ acronym }}">{{ exporter.label | trans }}</label>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
+                                <p class="whatwedo-utility-heading-3 mb-2">{{ 'araise_table.download.choices' | trans }}</p>
+                                <ul class="mb-4" role="list">
+                                    {% for acronym,exporter in table.exporters %}
+                                        <li class="flex items-center mb-2 gap-x-2">
+                                            {% set stimulusAction = (table.exporters|length > 1) ? stimulus_action('araise/table-bundle/exporter', 'select') : '' %}
+                                            <input
+                                                class="whatwedo_core-checkbox"
+                                                type="checkbox"
+                                                id="{{ acronym }}"
+                                                name="exporter"
+                                                value="{{ acronym }}"
+                                                {{ stimulusAction }}
+                                            >
+                                            <label class="whatwedo-utility-paragraph" for="{{ acronym }}">{{ exporter.label | trans }}</label>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
                             {% endif %}
-                            <p class="whatwedo-utility-bold whitespace-nowrap mb-3 mt-3">{{ 'araise_table.download.info' | trans }}</p>
+                            <p class="whatwedo-utility-bold whitespace-nowrap mb-2">{{ 'araise_table.download.info' | trans }}</p>
                             <div>
                                 {% for label,queryParameters in {'araise_table.page' : app.request.query.all, 'araise_table.all' : {'all':1}|merge(app.request.query.all)} %}
+                                    {% if block is defined and content is defined %}
+                                        {% set queryParameters = queryParameters|merge({
+                                            'definition': view.definition.alias,
+                                            'block': block.acronym,
+                                            'content': content.acronym,
+                                            'entityId': app.request.attributes.get('id'),
+                                        }) %}
+                                    {% endif %}
                                     <a
-                                        href="{{ path(view.definition.getRoute(constant('araise\\CrudBundle\\Enums\\Page::EXPORT')), queryParameters) }}"
+                                        href="{{ path(table.option('definition').getRoute(constant('araise\\CrudBundle\\Enums\\Page::EXPORT')), queryParameters) }}"
                                         class="whatwedo_table:header__button whatwedo_table:header__button--download whatwedo_table-button"
                                         {% if table.exporters|length > 1 %} {{ stimulus_target('araise/table-bundle/exporter', 'link') }} {% endif %}
                                     >
@@ -66,6 +75,10 @@
                 </div>
             {% endif %}
 
+            {% if block is defined and content is defined %}
+                {{ _self.add_button(content, view, isOnShow) }}
+            {% endif %}
+
             {% if table.filterExtension and table.filterExtension.filters|length > 0 %}
                 <button
                     class="whatwedo_table:header__button whatwedo_table:header__button--filter whatwedo_table-button whatwedo_table-button--filter {{ table.filterExtension.getFilterCount() > 0 ? 'araise_table-button--filter-active' : '' }} }}"
@@ -73,6 +86,7 @@
                     type="button"
                     {{ stimulus_action('araise/table-bundle/filter', 'open') }}
                     {{ stimulus_target('araise/table-bundle/filter', 'triggerButton') }}
+                    {{ stimulus_controller('araise/crud-bundle/tooltip', { 'title': 'araise_table.filter.tooltip'|trans } ) }}
                 >
                     {{ bootstrap_icon('funnel-fill', { class: 'w-4 h-4' }) }}
                 </button>
@@ -91,17 +105,85 @@
                             <input
                                 class="whatwedo_core-input--rounded-left"
                                 type="search"
-                                name="{{ araise_table_parameter(table, 'query') }}" placeholder="Suchbegriff ..."
+                                name="{{ araise_table_parameter(table, 'query') }}" placeholder="{{ 'araise_table.search.placeholder'|trans }}"
                                 value="{{ table.searchExtension.query }}"
                             >
                         </div>
-                        <button class="whatwedo_table-button--search" type="submit">
-                            {{ bootstrap_icon('search', { class: 'h-4 w-4 text-neutral-400', alt: 'Suchen' }) }}
+                        <button class="whatwedo_table-button--search" type="submit" title="{{ 'araise_table.search.title'|trans }}">
+                            {{ bootstrap_icon('search', { class: 'h-4 w-4 text-neutral-400' }) }}
+                            <span class="sr-only">{{ 'araise_table.search.title'|trans }}</span>
                         </button>
                     </div>
                 </form>
             {% endif %}
         </div>
     </header>
-
 {% endif %}
+
+{% macro add_button(content, view, isOnShow) %}
+    {% set createUrl = content.createUrl(view.data) %}
+    {% if createUrl
+        and (content.addVoterAttribute is null or is_granted(content.addVoterAttribute, view.data))
+        and view.route in content.option(constant('araise\\CrudBundle\\Content\\RelationContent::OPT_ADD_VISIBILITY'))
+    %}
+
+
+    {% set additionalClass = (not isOnShow) ? (content.option('attr')['class'] ?? '') : '' %}
+    {% set additionalAttributes = (not isOnShow) ? attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ') : '' %}
+
+    <div
+        class="flex justify-end {{ additionalClass }}"
+        {{ additionalAttributes|raw }}
+        {{ stimulus_controller('araise/core-bundle/modal-form', { formUrl: createUrl }) }}>
+
+            <button
+                type="button"
+                class="whatwedo-crud-button--action whatwedo-crud-button--rounded"
+                {{ stimulus_action('araise/core-bundle/modal-form', 'openModal') }}
+                {{ stimulus_controller('araise/crud-bundle/tooltip', { 'title': 'araise_crud.relation.add'|trans } ) }}
+            >
+                {{ bootstrap_icon('plus', { class: 'w-6 h-6' }) }}
+            </button>
+
+            <div
+                {{ stimulus_target('araise/core-bundle/modal-form', 'menu') }}
+                class="hidden whatwedo-crud-modal whatwedo-utility-modal"
+                data-transition-enter-from="opacity-0"
+                data-transition-enter-to="opacity-100"
+                data-transition-leave-from="opacity-100"
+                data-transition-leave-to="opacity-0"
+                role="dialog"
+                aria-modal="true"
+            >
+                <div class="whatwedo-crud-modal__overlay whatwedo-utility-modal__overlay">
+                    <div
+                        class="whatwedo-crud-modal__backdrop whatwedo-utility-modal__backdrop"
+                        {{ stimulus_action('araise/core-bundle/modal-form', 'close', 'click') }}
+                    ></div>
+
+                    {# This element is to trick the browser into centering the modal contents. #}
+                    <span class="hidden md:inline-block md:align-middle md:h-screen" aria-hidden="true">&#8203;</span>
+
+                    <div class="whatwedo-crud-modal__wrapper whatwedo-utility-modal__wrapper">
+                        <div class="whatwedo-utility-modal__wrapper-inner">
+                            <button
+                                type="button"
+                                class="whatwedo-crud-modal__close whatwedo-utility-modal__close"
+                                {{ stimulus_action('araise/core-bundle/modal-form', 'close') | stimulus_action('araise/core-bundle/modal-form', 'close', 'keydown.esc@window') }}
+                            >
+                                <span class="sr-only">Close</span>
+                                {{ bootstrap_icon('x', { class: 'inline w-8 h-8' }) }}
+                            </button>
+
+                            <div
+                                class="whatwedo-crud-modal__body w-full"
+                                {{ stimulus_target('araise/core-bundle/modal-form', 'modalBody') }}
+                            ></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+

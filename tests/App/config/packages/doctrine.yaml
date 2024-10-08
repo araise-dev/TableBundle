@@ -4,7 +4,7 @@ doctrine:
         connections:
             default:
                 # configure these for your database server
-                driver: 'pdo_sqlite'
+                driver: '%env(resolve:DATABASE_DRIVER)%'
                 charset: utf8mb4
                 default_table_options:
                     charset: utf8mb4

@@ -22,6 +22,32 @@ All Options are as constants in `Table` class.
 - - `content_show_header`: Boolean, default: `true`
 - - `content_show_entry_dropdown`: Boolean, default: `true`
 - - `content_show_pagination_if_page_total_less_than_limit`: Boolean, default: `true`
+- `sub_table_collapsed`: Boolean or callable, default: `true`
+
+
+### Collapse Sub-Tables
+By default, sub-tables will be rendered collapsed. 
+This can be changed by setting the `sub_table_collapsed` option to either `false` or pass a callable that returns a boolean.
+
+```php
+$table->setOption(Table::OPT_SUB_TABLE_COLLAPSED, false);
+```
+
+Note that if you pass a function, you will get the current row as an argument.
+You can use this to only expand certain rows:
+
+```php
+// Expand only users with an email
+$table->setOption(Table::OPT_SUB_TABLE_COLLAPSED, function(array|object $row) {
+    if(!$row instanceof User) {
+        return true;
+    }
+    if($row->getEmail() !== null) {
+        return false;
+    }
+    return true;
+});
+```
 
 
 ## Column Options
@@ -47,6 +73,33 @@ All Options are as constants in `Column` class.
 - `accessor_path`: String, defaults to the acronym
 - `formatter`: [Formatter](formatter.md)
 - `sort_expression`: String, example: `'trainerGroup.name'`
+
+## Footer Columns
+In this example we would like to add a count of the content at the end of our table.
+We can to this by adding a footer column like so:
+
+```php
+$data= [
+    [
+        'id' => 1,
+    ],
+    [
+        'id' => 2,
+    ]
+];
+
+$table
+    ->setFooterData(['count' => count($data)])
+    ->addFooterColumn('totalLabel', null, [
+        Column::OPT_CALLABLE => fn (array $content) => 'Total',
+    ])
+    ->addFooterColumn('count', null, [
+        Column::OPT_CALLABLE => fn(array $content) => $content['count'],
+    ])
+;
+```
+
+Note that this is only a simple example. The data could easily be replaced with an array of entities for example.
 
 ## Action Columns
 
