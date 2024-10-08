@@ -57,7 +57,13 @@ class Table
 
     public const OPT_SUB_TABLE_LOADER = 'sub_table_loader';
 
+    public const OPT_SUB_TABLE_COLLAPSED = 'sub_table_collapsed';
+
     protected array $columns = [];
+
+    protected ?array $footerColumns = null;
+
+    protected mixed $footerData = null;
 
     protected array $actions = [];
 
@@ -112,6 +118,7 @@ class Table
             self::OPT_DEFINITION => null,
             self::OPT_DATALOADER_OPTIONS => [],
             self::OPT_SUB_TABLE_LOADER => null,
+            self::OPT_SUB_TABLE_COLLAPSED => true,
         ]);
 
         $resolver->setAllowedTypes(self::OPT_TITLE, ['null', 'string']);
@@ -129,6 +136,7 @@ class Table
         $resolver->setAllowedTypes(self::OPT_SUB_TABLE_LOADER, ['null', 'callable']);
         $resolver->setRequired(self::OPT_DATA_LOADER);
         $resolver->setAllowedTypes(self::OPT_DATA_LOADER, allowedTypes: DataLoaderInterface::class);
+        $resolver->setAllowedTypes(self::OPT_SUB_TABLE_COLLAPSED, ['boolean', 'callable']);
     }
 
     public function getSubTables(object|array $row): array
@@ -168,6 +176,14 @@ class Table
         return is_callable($this->options[self::OPT_PRIMARY_LINK]) ? $this->options[self::OPT_PRIMARY_LINK]($row) : null;
     }
 
+    public function getSubTableCollapsed(object|array $row): bool
+    {
+        if (is_callable($this->options[self::OPT_SUB_TABLE_COLLAPSED])) {
+            return $this->options[self::OPT_SUB_TABLE_COLLAPSED]($row);
+        }
+        return $this->options[self::OPT_SUB_TABLE_COLLAPSED];
+    }
+
     public function setOption(string $key, $value): static
     {
         $resolver = new OptionsResolver();
@@ -193,33 +209,38 @@ class Table
         return $this->columns;
     }
 
+    /**
+     * @return Column[]
+     */
+    public function getFooterColumns(): ?array
+    {
+        if ($this->footerColumns === null) {
+            return null;
+        }
+        uasort($this->footerColumns, fn (Column $a, Column $b) => $b->getOption(Column::OPT_PRIORITY) <=> $a->getOption(Column::OPT_PRIORITY));
+
+        return $this->footerColumns;
+    }
+
     public function addColumn(string $acronym, $type = null, array $options = [], ?int $position = null): static
     {
-        if ($type === null) {
-            $type = Column::class;
-        }
-
-        if ($this->options[self::OPT_DEFINITION]) {
-            if (!isset($options[Column::OPT_LABEL])) {
-                $options[Column::OPT_LABEL] = sprintf('wwd.%s.property.%s', $this->options[self::OPT_DEFINITION]->getEntityAlias(), $acronym);
-            }
-        }
-
-        // set link_the_column_content on first column if not set
-        if (!isset($options[Column::OPT_LINK_THE_COLUMN_CONTENT]) && count($this->columns) === 0) {
-            $options[Column::OPT_LINK_THE_COLUMN_CONTENT] = true;
-        }
-
-        $column = new $type($this, $acronym, $options);
-
-        if ($column instanceof FormattableColumnInterface) {
-            $column->setFormatterManager($this->formatterManager);
-        }
-
+        $column = $this->internalAddColumn($acronym, $type, $options);
         if ($position === null) {
             $this->columns[$acronym] = $column;
         } else {
-            $this->insertColumnAtPosition($acronym, $column, $position);
+            $this->insertColumnAtPosition($this->columns, $acronym, $column, $position);
+        }
+
+        return $this;
+    }
+
+    public function addFooterColumn(string $acronym, $type = null, array $options = [], ?int $position = null): static
+    {
+        $column = $this->internalAddColumn($acronym, $type, $options, false);
+        if ($position === null) {
+            $this->footerColumns[$acronym] = $column;
+        } else {
+            $this->insertColumnAtPosition($this->footerColumns, $acronym, $column, $position);
         }
 
         return $this;
@@ -228,6 +249,13 @@ class Table
     public function removeColumn($acronym): static
     {
         unset($this->columns[$acronym]);
+
+        return $this;
+    }
+
+    public function removeFooterColumn($acronym): static
+    {
+        unset($this->footerColumns[$acronym]);
 
         return $this;
     }
@@ -355,6 +383,18 @@ class Table
         return $this->extensions[$extension]->setTable($this);
     }
 
+    public function getFooterData(): mixed
+    {
+        return $this->footerData;
+    }
+
+    public function setFooterData(mixed $footerData): static
+    {
+        $this->footerData = $footerData;
+
+        return $this;
+    }
+
     public function removeExtension(string $extension): void
     {
         unset($this->extensions[$extension]);
@@ -439,12 +479,12 @@ class Table
         $this->eventDispatcher->dispatch(new DataLoadEvent($this), DataLoadEvent::POST_LOAD);
     }
 
-    protected function insertColumnAtPosition($key, $value, $position)
+    protected function insertColumnAtPosition(&$columns, $key, $value, $position)
     {
         $newArray = [];
         $added = false;
         $i = 0;
-        foreach ($this->columns as $elementsAcronym => $elementsElement) {
+        foreach ($columns as $elementsAcronym => $elementsElement) {
             if ($position === $i) {
                 $newArray[$key] = $value;
                 $added = true;
@@ -455,7 +495,33 @@ class Table
         if (! $added) {
             $newArray[$key] = $value;
         }
-        $this->columns = $newArray;
+        $columns = $newArray;
+    }
+
+    private function internalAddColumn(string $acronym, $type = null, array $options = [], bool $mainColumns = true): Column
+    {
+        if ($type === null) {
+            $type = Column::class;
+        }
+
+        if ($this->options[self::OPT_DEFINITION] && $mainColumns) {
+            if (!isset($options[Column::OPT_LABEL])) {
+                $options[Column::OPT_LABEL] = sprintf('wwd.%s.property.%s', $this->options[self::OPT_DEFINITION]->getEntityAlias(), $acronym);
+            }
+        }
+
+        // set link_the_column_content on first column if not set
+        if (!isset($options[Column::OPT_LINK_THE_COLUMN_CONTENT]) && count($this->columns) === 0 && $mainColumns) {
+            $options[Column::OPT_LINK_THE_COLUMN_CONTENT] = true;
+        }
+
+        $column = new $type($this, $acronym, $options);
+
+        if ($column instanceof FormattableColumnInterface) {
+            $column->setFormatterManager($this->formatterManager);
+        }
+
+        return $column;
     }
 
     /**

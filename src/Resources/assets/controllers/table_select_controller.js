@@ -3,10 +3,11 @@ import 'regenerator-runtime/runtime'
 
 export default class extends Controller {
 
-    static targets = ["ids", "selector", "checkAll", "unCheckAll", "selectedCount"]
+    static targets = ['ids', 'selector', 'checkAll', 'unCheckAll', 'selectedCount']
     static values = {
         footSelectedTemplate: String
     }
+    static classes = ['hideCount']
 
     connect() {
         if (!this.hasIdsTarget) {
@@ -18,6 +19,9 @@ export default class extends Controller {
         });
     }
 
+    /**
+     * @param {Event} event
+     */
     selectId(event) {
         if (!event.target.dataset.entityId) {
             return;
@@ -46,8 +50,8 @@ export default class extends Controller {
             this.addId(selector.dataset.entityId);
             selector.checked = true;
         });
-        this.checkAllTarget.classList.add('hidden');
-        this.unCheckAllTarget.classList.remove('hidden');
+        this.checkAllTarget.classList.add(this.hideCountClasses);
+        this.unCheckAllTarget.classList.remove(this.hideCountClasses);
     }
 
     unCheckAll() {
@@ -55,15 +59,21 @@ export default class extends Controller {
             this.removeId(selector.dataset.entityId);
             selector.checked = false;
         });
-        this.checkAllTarget.classList.remove('hidden');
-        this.unCheckAllTarget.classList.add('hidden');
+        this.checkAllTarget.classList.remove(this.hideCountClasses);
+        this.unCheckAllTarget.classList.add(this.hideCountClasses);
     }
 
+    /**
+     * @param {string} id
+     */
     hasId(id) {
         let ids = this.getIds();
         return ids.includes(id)
     }
 
+    /**
+     * @param {string} id
+     */
     addId(id) {
         let ids = this.getIds();
         ids.push(id);
@@ -71,6 +81,9 @@ export default class extends Controller {
         this.updateSelectedCount();
     }
 
+    /**
+     * @param {string} id
+     */
     removeId(id) {
         let ids = this.getIds();
         ids = ids.filter(function (value, index, arr) {
@@ -79,21 +92,23 @@ export default class extends Controller {
         this.idsTarget.value = JSON.stringify(ids);
         this.updateSelectedCount();
         if (ids.length == 0) {
-            this.checkAllTarget.classList.remove('hidden');
-            this.unCheckAllTarget.classList.add('hidden');
+            this.checkAllTarget.classList.remove(this.hideCountClasses);
+            this.unCheckAllTarget.classList.add(this.hideCountClasses);
         }
     }
 
     updateSelectedCount() {
         const count = this.getIds().length;
 
-        if (count === 0) {
-            this.selectedCountTarget.classList.add('hidden');
-            return;
-        }
+        if(this.hasSelectedCountTarget) {
+            if (count === 0) {
+                this.selectedCountTarget.classList.add(this.hideCountClasses);
+                return;
+            }
 
-        this.selectedCountTarget.classList.remove('hidden');
-        this.selectedCountTarget.innerHTML = this.footSelectedTemplateValue.replace('{count}', count);
+            this.selectedCountTarget.classList.remove(this.hideCountClasses);
+            this.selectedCountTarget.innerHTML = this.footSelectedTemplateValue.replace('{count}', count);
+        }
     }
 
     syncSelectedIds() {
