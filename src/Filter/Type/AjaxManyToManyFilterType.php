@@ -43,8 +43,8 @@ class AjaxManyToManyFilterType extends AjaxOneToManyFilterType
         );
         $column = $this->getOption(static::OPT_COLUMN);
         return match ($operator) {
-            static::CRITERIA_EQUAL => $queryBuilder->expr()->isMemberOf(':'.$targetParameter, $column),
-            static::CRITERIA_NOT_EQUAL => $queryBuilder->expr()->not($queryBuilder->expr()->isMemberOf(':'.$targetParameter, $column)),
+            static::CRITERIA_EQUAL => $queryBuilder->expr()->in($column, '(:'.$targetParameter.')'),
+            static::CRITERIA_NOT_EQUAL => $queryBuilder->expr()->not($queryBuilder->expr()->in($column, '(:'.$targetParameter.')')),
             default => null,
         };
     }
