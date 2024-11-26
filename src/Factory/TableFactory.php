@@ -53,7 +53,7 @@ class TableFactory implements ServiceSubscriberInterface
     ) {
     }
 
-    public function create($identifier, string $dataLoader = null, $options = []): Table
+    public function create($identifier, ?string $dataLoader = null, $options = []): Table
     {
         if (! $dataLoader) {
             $dataLoader = DoctrineDataLoader::class;
