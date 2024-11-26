@@ -1,5 +1,14 @@
 {# Table Header #}
-{% if table.option('title') or (view is defined and table.option('definition').hasCapability(constant('araise\\CrudBundle\\Enums\\Page::EXPORT'))) or (table.filterExtension and table.filterExtension.filters|length > 0) or (table.searchExtension and table.option('searchable')) %}
+{% if
+    table.option('title')
+    or (view is defined and table.option('definition').hasCapability(constant('araise\\CrudBundle\\Enums\\Page::EXPORT')))
+    or (table.filterExtension and table.filterExtension.filters|length > 0)
+    or (table.searchExtension and table.option('searchable'))
+    or (content.createUrl(view.data)
+        and (content.addVoterAttribute is null or is_granted(content.addVoterAttribute, view.data))
+        and view.route in content.option(constant('araise\\CrudBundle\\Content\\RelationContent::OPT_ADD_VISIBILITY'))
+    )
+%}
     <header class="whatwedo_table:header sm:flex sm:justify-between my-3">
         <div class="whatwedo_table:header__title flex-1 min-w-0 whatwedo-utility-heading-1 sm:truncate">
             {% if table.option('title') %}

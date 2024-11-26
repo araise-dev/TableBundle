@@ -79,7 +79,7 @@ class Category implements TreeInterface
         return $this->lvl;
     }
 
-    public function setParent(self $parent = null): void
+    public function setParent(?self $parent = null): void
     {
         $this->parent = $parent;
     }
