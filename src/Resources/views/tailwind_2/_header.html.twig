@@ -138,7 +138,7 @@
 
 
     {% set additionalClass = (not isOnShow) ? (content.option('attr')['class'] ?? '') : '' %}
-    {% set additionalAttributes = (not isOnShow) ? attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ') : '' %}
+    {% set additionalAttributes = (not isOnShow) ? attr|default([])|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ') : '' %}
 
     <div
         class="flex justify-end {{ additionalClass }}"
