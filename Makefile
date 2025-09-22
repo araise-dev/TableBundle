@@ -41,6 +41,6 @@ styles:
 
 ## PHP Unit
 phpunit:
-	vendor/bin/simple-phpunit
+	vendor/bin/phpunit
 
 

@@ -221,7 +221,8 @@
                                 {% endif %}
                             {% endif %}
                         {% endapply %}
-                        {{ araise_table_column_render(column, row) }}
+                        {% set columnValue = araise_table_column_render(column, row) %}
+                        {{ wwd_is_html_safe(column) ? columnValue|raw : columnValue }}
                         {% if column.option('link_the_column_content') and columnLink|default(false) %}</a>{% endif %}
                     </td>
                 {% endfor %}
@@ -312,7 +313,8 @@
                             class="px-3 py-2 {{ footerColumn.option('attributes')['class'] ?? '' }}"
                             {{ attr|map((value, attr) => "#{attr}=\"#{value}\"")|join(' ')|raw }}
                         >
-                            {{ araise_table_column_render(footerColumn, table.footerData) }}
+                            {% set columnValue = araise_table_column_render(footerColumn, table.footerData) %}
+                            {{ wwd_is_html_safe(footerColumn) ? columnValue|raw : columnValue }}
                         </td>
                     {% endfor %}
 

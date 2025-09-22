@@ -3,5 +3,3 @@ parameters:
     paths:
         - src
         - tests
-    bootstrapFiles:
-        - vendor/bin/.phpunit/phpunit-9.6-0/vendor/autoload.php
