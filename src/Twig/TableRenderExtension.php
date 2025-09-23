@@ -27,18 +27,20 @@ class TableRenderExtension extends AbstractExtension
 
     public function getFunctions(): array
     {
-        $options = [
+
+        $options = $noSafeOptions = [
             'needs_context' => true,
             'is_safe' => ['html'],
             'is_safe_callback' => true,
             'blockName' => 'blockName',
         ];
+        $noSafeOptions['is_safe'] = [];
 
         return [
             new TwigFunction('araise_table_render', fn ($context, Table $table) => $this->renderTable($context, $table), $options),
             new TwigFunction('araise_table_only_render', fn ($context, Table $table) => $this->renderTable($context, $table, 'table_table'), $options),
             new TwigFunction('araise_table_action_render', fn ($context, Action $action, $entity) => $this->renderTableAction($context, $action, $entity), $options),
-            new TwigFunction('araise_table_column_render', fn ($context, Column $column, $entity) => $this->renderTableColumn($context, $column, $entity), $options),
+            new TwigFunction('araise_table_column_render', fn ($context, Column $column, $entity) => $this->renderTableColumn($context, $column, $entity), $noSafeOptions),
         ];
     }
 

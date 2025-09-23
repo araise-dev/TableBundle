@@ -25,6 +25,8 @@
         "symfony/stimulus-bundle": "^2.16"
     },
     "require-dev": {
+        "araise/core-bundle": "dev-develop as 1.1",
+        "araise/search-bundle": "dev-develop as 3.1",
         "symfony/phpunit-bridge": "^6.4|^7.0",
         "symfony/config": "^6.4|^7.0",
         "symfony/dependency-injection": "^6.4|^7.0",
@@ -40,7 +42,10 @@
         "symfony/webpack-encore-bundle": "^1.14|^2.1",
         "symfony/security-core": "^6.4|^7.0",
         "symfony/security-bundle": "^6.4|^7.0",
-        "phpstan/phpstan": "^1.5"
+        "phpstan/phpstan": "^1.5",
+        "slevomat/coding-standard": "8.22.1",
+        "phpunit/phpunit": "^10",
+        "symfony/test-pack": "^1.0"
     },
     "autoload": {
         "psr-4": {

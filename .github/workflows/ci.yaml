@@ -49,7 +49,7 @@ jobs:
                   SYMFONY_REQUIRE: ${{ matrix.symfony }}
               uses: ramsey/composer-install@v2
             - name: Run test suite on PHP ${{ matrix.php }} and Symfony ${{ matrix.symfony }}
-              run: vendor/bin/simple-phpunit
+              run: vendor/bin/phpunit
             - name: Run ECS
               run: vendor/bin/ecs
             - name: Run PHPStan
